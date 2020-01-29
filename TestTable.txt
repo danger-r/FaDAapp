@@ -1,0 +1,12 @@
+"Id"	"Group"	"Parameter.1"	"Parameter.2"	"Parameter.3"	"Parameter.4"	"Parameter.5"	"Parameter.6"	"Parameter.7"	"Parameter.8"
+"Sample 1"	"Group 1"	86.8	15.4	45.4	16	50	75	10	13
+"Sample 2"	"Group 1"	88.3	16.1	33.6	17	74	82	2	11
+"Sample 3"	"Group 1"	91.6	18.9	35.2	16	65	90	4	11
+"Sample 4"	"Group 1"	88.2	14	30.5	14	98	86	7	8
+"Sample 5"	"Group 1"	87.4	17.3	8.57	20	95	96	7	13
+"Sample 6"	"Group 2"	90.3	26.2	6.69	10	79	100	8	2
+"Sample 7"	"Group 2"	86.6	21.4	7.88	12	56	70	2	9
+"Sample 8"	"Group 2"	89	21.7	8.8	20	42	85	10	5
+"Sample 9"	"Group 2"	87.8	22.3	11.5	14	40	82	9	10
+"Sample 10"	"Group 2"	85.3	25	10.8	13	83	79	10	10
+
