@@ -24,7 +24,6 @@ library(impute)           #For knn on the heatmap when there is NA values
 library(FSA)              #For some tests (DunnTest)
 library(DT)               #For datatabkes functions
 library(shinyWidgets)     #For some shiny functions
-#library(pgirmess)
 library(RColorBrewer)     #For the color palette
 library(pROC)             #For ROCCurves
 if (!require("devtools"))
@@ -36,20 +35,13 @@ library(parallel)
 
 ## Sources ####
 source("./app/general/general.R")
-
 source("./app/tabs/about/about.R")
 source("./app/tabs/about/insructions.R")
-
 source("./app/tabs/tableDescr/tableDescr.R")
-
 source("./app/tabs/batchPlot/batchPlot.R")
-
 source("./app/tabs/heatmapPca/heatmapPca.R")
-
 source("./app/tabs/correlation/correlation.R")
-
 source("./app/tabs/ROCCurves/ROCCurves.R")
-
 #####
 
 # Define UI for application that draws a histogram
@@ -212,3 +204,5 @@ server <- function(input, output, session) {
 ###
 # Run the application
 shinyApp(ui = ui, server = server)
+
+####End
