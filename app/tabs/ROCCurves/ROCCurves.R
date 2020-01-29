@@ -59,7 +59,6 @@ funROCPlot <- function(used_Table,infoSelectColor,infoGroup1,infoGroup2,infoPara
     par(new=TRUE) #Put multiple graph in single plot
   })
 
-  # return(gROC)
 }
 
 funAUCTable <- function(used_Table,infoGroup1,infoGroup2){
@@ -131,14 +130,4 @@ ROCDownload <- function(input,output,reacROCPlot){
                                              print( reacROCPlot() )
                                              dev.off()                      })
 }
-
-#old####
-#ROCDownload <- function(input,output,reacROCPlot){
-#  output$dROCPlot = downloadHandler(filename =
-#                                      reactive(paste(input$file1$name,"_ROCCurve.tiff",sep = "")), #set the #filename of the downloaded file
-#                                    content = function(file, compression = "lzw", res = 600) {
-#                                      tiff(file)
-#                                      print( reacROCPlot() )
-#                                     dev.off()                      }, contentType = "image/png")
-#}
-####
+####End
