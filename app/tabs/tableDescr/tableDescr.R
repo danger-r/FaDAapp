@@ -22,9 +22,6 @@ plotOptionUI <- function(){ #Display on the side panel
                              Bonferroni = "bonferroni",
                              None = "none"),
                  selected = "BH"),
-  ##"holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
-
-
 
     radioButtons(inputId = "Design","Design:",
                  choices = c(Paired = "paired", Unpaired = "unpaired"), selected = "unpaired", inline = TRUE),
@@ -36,8 +33,6 @@ plotOptionUI <- function(){ #Display on the side panel
 } #Display of the plot option part on the sidebar
 
 ## Server Functions ####
-
-
 MytableDescr <- function(input,used_groups,calc_table){
   tableDescr <- reactive({
     validate( need( !is.null(calc_table()), "Please, upload a properly formatted dataset or use the example." ) )
@@ -61,14 +56,10 @@ MytableStat <- function(input,used_groups,calc_table){
 } #Table of p-values between groups
 
 plotDescr <- function(input,used_groups,calc_table,colorFunction,mytableStat){
-  # cl <- makeCluster(detectCores() - 1) #Attempt to add parallelism but doesn't work
-
   plotDescr <- reactive({
     df2 <- calc_table()
     validate( need( !is.null(df2), "" ) )
     selected <- input$Input_tableStat_columns_selected
-
-    # gcol = c("darkgreen","blue", "blueviolet", "black",  "orange", "blue", "red")
 
     validate( need( !is.null(selected), "" ) )
 
@@ -117,10 +108,7 @@ funMytableDescr <- function(used_Groups,calc_Table,infoTest){
   }
 
 
-
-
   ValDesc2 <- format(ValDesc, digits = 4)
-  #print(ValDesc2, bordered = TRUE )
   return(ValDesc2)
 }
 
@@ -206,16 +194,6 @@ funPlotDescr <- function(used_Groups,calc_Table,gcol, data,infoGraph,infoFilenam
   rown <- rownames(calc_Table)
 
 
-  # clusterExport(
-  #   cluster, varlist=list("used_Groups", "calcTable", "gcol", "data", "infoGraph", "infoFilename", "infoPlotTitle", "infoPlotYAxis", "group", "rown"),
-  #   envir=environment())
-  #
-  # junk <- clusterEvalQ(cluster, {library(ggplot2)
-  #                              library(plotly)})
-  #
-  # registerDoParallel(cluster) #Attempt to add parallelism but doesn't work
-
-  #plotList <- parLapply(cluster,data,function(elem){  #Attempt to add parallelism but doesn't work
   plotList <- lapply(data,function(elem){
     datatoto <- data.frame(Value = elem$value, group = group, id = rown )
     ec <- max(elem$value)-min(elem$value)
@@ -295,10 +273,6 @@ funPlotDescr <- function(used_Groups,calc_Table,gcol, data,infoGraph,infoFilenam
   })
 
 
-  # stopCluster(cluster) #Parallelism
-
-  # registerDoSEQ() #Parallelism
-
   if(length(plotList) == 1){
     res <- plotList[[1]]
   }else{
@@ -346,19 +320,4 @@ tableDescrOutput <- function(output,reacMytableStat,reacMytableDescr,reacPlotDes
   })
   output$PlotDescr <- renderPlotly({ reacPlotDescr()     })
 }
-
-## Download ####
-#
-# plotDownload <- function(input,output,reacPlotDescr){
-#    output$dPlot <- downloadHandler(filename =
-#                                      reactive(paste(input$file1$name,paste(input$Graph,"_Plot.png",sep = ""),sep="_")),
-#                                  content = function(file, compression = "lzw", res = 600) {
-#                                    #tiff(file)
-#                                    path_split<-unlist(strsplit(file,'\\\\'))
-#
-#                                    download_path<-paste(path_split[1:length(path_split)-1],collapse='/')
-#
-#                                    withr::with_dir(download_path, orca(reacPlotDescr(), path_split[length(path_split)],debug = FALSE))
-#                                    #dev.off()
-#                                  })
-# }
+##End
