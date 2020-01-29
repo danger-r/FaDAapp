@@ -102,11 +102,7 @@ funFixedHeatmap <- function(used_Groups,calc_Table,gcol,infoColor1,infoMiddleCol
 
 
     #Set annotation
-  #col_ann <- brewer.pal(n = length(levels(group)), name = "Set2")
-  #col_ann <- col_ann[1:length(levels(as.factor(used_Groups)))]
-
   col_ann <- gcol[1:length(levels(as.factor(used_Groups)))]
-  #col_ann <- colorRampPalette(colors)(length(levels(as.factor(used_Groups))))
   names(col_ann) <- levels(as.factor(used_Groups))
   ha_annot <- HeatmapAnnotation(df = data.frame(Groups= used_Groups),
                                 col = list(Groups = col_ann))
@@ -243,19 +239,4 @@ FixedPCADownload <- function(input,output,reacFixedPCA){
                                               dev.off()                      })
 }
 
-
-
-
-
-
-# PCADownload <- function(input,output,reacPCA){
-#   output$dPCA <- downloadHandler(filename =
-#                                    reactive(paste(input$file1$name,"_PCA.png",sep = "")),
-#                                      content = function(file, compression = "lzw", res = 600) {
-#                                        path_split<-unlist(strsplit(file,'\\\\'))
-#
-#                                        download_path<-paste(path_split[1:length(path_split)-1],collapse='/')
-#                                        withr::with_dir(download_path, orca(reacPCA(), path_split[length(path_split)],debug = FALSE))
-#                                      }, contentType = "image/png")
-# }
-
+##End
