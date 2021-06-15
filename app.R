@@ -144,9 +144,9 @@ server <- function(input, output, session) {
 
 # ======Call Server Functions (reactive functions) ####
 # General:
-  reacUsedTable <- usedTable(input,session)               #formatted data table from uploaded table
-  reacUsedGroups <- usedGroups(input,reacUsedTable)       #groups
-  reacCalcTable <- calcTable(input,reacUsedTable)         #transformed data table from uploaded table
+  reacUsedTable <- usedTable(input,session)               #reacUsedTable is the input table (formated) uploaded by the user
+  reacUsedGroups <- usedGroups(input,reacUsedTable)       #reacUsedGroups is the group name vector taken from usedTable
+  reacCalcTable <- calcTable(input,reacUsedTable)         # reacusedTable recalculated in log if log option is selected, without the group column
   reacColorFunction <- colorFunction(input,reacUsedTable) #selected colors
   reacNameTable <- nameTable(input)                       #parameter names from uploaded table
   observeGeneral(input,session,reacUsedTable)
@@ -157,29 +157,29 @@ server <- function(input, output, session) {
   Textintro <- introduction()
 
 # Description Table : summary and p-values (Tab 1)
-  reacMytableDescr <- MytableDescr(input,reacUsedGroups,reacCalcTable)
-  reacMytableStat <- MytableStat(input,reacUsedGroups,reacCalcTable)
-  reacPlotDescr <- plotDescr(input,reacUsedGroups,reacCalcTable,reacColorFunction,reacMytableStat)
+  reacMytableDescr <- MytableDescr(input,reacUsedGroups,reacCalcTable)      #descriptive table (using groups (reacUsedGroups) and calculated Table (reacCalcTable) as input)
+  reacMytableStat <- MytableStat(input,reacUsedGroups,reacCalcTable)        #statistic table  (using groups (reacUsedGroups) and calculated Table (reacCalcTable) as input)
+  reacPlotDescr <- plotDescr(input,reacUsedGroups,reacCalcTable,reacColorFunction,reacMytableStat)       #individual plot of selected parameters
 
 # Batch Plots (Tab 2):
-  reacBatchPlot <- batchPlot(input,reacUsedGroups,reacCalcTable,reacColorFunction)
-  reacMoreBatchPlot <- MoreBatchPlot(input,reacUsedGroups,reacCalcTable,reacColorFunction)
+  reacBatchPlot <- batchPlot(input,reacUsedGroups,reacCalcTable,reacColorFunction)          #plot of all parameters
+  reacMoreBatchPlot <- MoreBatchPlot(input,reacUsedGroups,reacCalcTable,reacColorFunction)  #plot of all parameters, to download if too many parameters
 
 # Heatmap and PCA (Tab 3):
-  reacFixedHeatmap <- FixedHeatmap(input,reacUsedGroups,reacCalcTable,reacColorFunction)
-  reacHeatmap <- heatMap(input,reacUsedGroups,reacCalcTable,reacColorFunction)
-  reacACP <- ACP(input,reacUsedGroups,reacCalcTable,reacColorFunction)
-  reacFixedPCA <- FixedPCA(input,reacUsedGroups,reacCalcTable,reacColorFunction)
+  reacFixedHeatmap <- FixedHeatmap(input,reacUsedGroups,reacCalcTable,reacColorFunction)    #static heatmap (using groups (reacUsedGroups), calculated Table (reacCalcTable), colors (reacColorFunction) as input)
+  reacHeatmap <- heatMap(input,reacUsedGroups,reacCalcTable,reacColorFunction)              #interactive heatmap 
+  reacACP <- ACP(input,reacUsedGroups,reacCalcTable,reacColorFunction)                      #interactive PCA
+  reacFixedPCA <- FixedPCA(input,reacUsedGroups,reacCalcTable,reacColorFunction)            #static PCA
 
 # Correlation Table (Tab 4):
-  reacCorrelogram <- correlogram(input,reacCalcTable)
-  reacCorrTable <- corrTable(input,reacCalcTable)
-  reacPvalCorrTable <- pvalCorrTable(input,reacCalcTable)
-  reacCorrGraph <- corrGraph(input,reacCalcTable)
+  reacCorrelogram <- correlogram(input,reacCalcTable)                                       #correlogram
+  reacCorrTable <- corrTable(input,reacCalcTable)                                           #correlation table
+  reacPvalCorrTable <- pvalCorrTable(input,reacCalcTable)                                   #p-values of correlation
+  reacCorrGraph <- corrGraph(input,reacCalcTable)                                           #individual correlation graph
 
 # ROC Curve (Tab 5):
-  reacROCPlot <- ROCPlot(input,reacUsedTable,reacColorFunction, reacCalcTable)
-  reacAUCTable <- AUCTable(input,reacUsedTable, reacCalcTable)
+  reacROCPlot <- ROCPlot(input,reacUsedTable,reacColorFunction, reacCalcTable)              #ROC curve
+  reacAUCTable <- AUCTable(input,reacUsedTable, reacCalcTable)                              #table of ROC values (AUCs, Youden index, NPV, PPV...)
 
 # ====== Output ####
 # General:
