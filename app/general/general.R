@@ -1,7 +1,7 @@
 ## Sources ####
 source("./app/general/inputFunctions.R")
 
-## UI ####
+## general UI ####
 readTableUI <- function(){
   tagList(
  conditionalPanel(condition="input.tabs != 'Tutorial'",
