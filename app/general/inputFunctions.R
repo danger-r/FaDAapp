@@ -25,9 +25,7 @@ isTransposedInput <- function(dataframe){
 #dataframe output :
 #the dataframe formated (transposed or not) or null if error != 0
 validingInput <- function(infoFileDatapath,decSeparator = "."){
-  if (  grepl(".txt", infoFileDatapath)  == T ) { separator= "\t"} else {separator=";"}
-  df <- read.csv(infoFileDatapath, sep =  separator, dec = decSeparator)
-
+  df <- read.csv(infoFileDatapath, sep =  "\t", dec = decSeparator)
   if(anyDuplicated(df[,1])){
      return(list("error" = 1, "dataframe" = NULL))
   }else{

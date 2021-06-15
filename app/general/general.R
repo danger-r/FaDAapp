@@ -16,7 +16,7 @@ readTableUI <- function(){
           fileInput(inputId = "file1",label = NULL, multiple = FALSE,
                     accept = c("text/csv", "text/comma-separated-values,text/plain", ".csv")
                     ),
-          style="display:inline-block;vertical-align:top;width:50%;"
+          style="display: inline-block;vertical-align:top;width:50%;"
         ),
         tags$div(
           actionButton(inputId = "sw_html",
@@ -41,28 +41,21 @@ readTableUI <- function(){
 
 generalDataOptionUI <- function(){
   tagList(
-        radioButtons(inputId = "Transform", "Transform data?",
-                 choices = c(Log2 = "Log2", Log10 = "Log10", None = "none"),
-                 selected = "none", inline = TRUE),
-        #style="display: inline-block;vertical-align:top;width:50%;",
-        bsPopover("Transform",
-                title= "Logarithmic transformations", "Log2 & Log10 will set all the negative values to 0",
-                  placement = "bottom", trigger = "hover", options = NULL),
-
+    radioButtons(inputId = "Transform",
+                 "Transform data?",
+                 choices = c(Log2 = "Log2", none = "none"), selected = "none", inline = TRUE),
+    bsTooltip("Transform","Log2 will set all the negative value to 0",placement = "bottom", trigger = "hover",
+              options = NULL),
     selectInput(inputId = "SelectColor",
                 "Change group colors:", c(rownames(brewer.pal.info[which(brewer.pal.info$category == "qual"),]) ), selected = "Set1" )
   )
 }
 
-
 generalParametricOptionUI <- function(){
   tagList(
-    radioButtons(inputId = "Test", "Test:",
-                 choices = c(Parametric = "parametric", Nonparametric = "nonparametric"),
-                 selected = "parametric", inline = TRUE),
-    bsPopover("Test", title= "Shapiro-Wilk normality test", "If p-value is <0.05, data are not normally distributed, and, with less than 30 samples, the use of non-parametric tests is recommended.",
-              placement = "bottom", trigger = "hover", options = NULL)
-
+    radioButtons(inputId = "Test",
+                 "Test:",
+                 choices = c(parametric = "parametric", nonparametric = "nonparametric"), selected = "parametric", inline = TRUE)
   )
 }
 
@@ -82,7 +75,7 @@ generalTableHead <- function(){
                    style="color: black; background-color: white;"),
       style="display:inline-block;vertical-align:bottom;"
     ),
-    bsTooltip("sw_head","Display the beginning of the table"),
+    bsTooltip("sw_head","Show head of the table"),
     tags$br(),tags$br(),
     bsModal("modal",textOutput("filename2"),trigger = "sw_head", size = 'large',
               DTOutput("head")
@@ -93,77 +86,41 @@ generalTableHead <- function(){
 }
 
 TutorialOptionUI <- function(){
-  text = tags$span(
-  br("If you like FaDA, please cite:", tags$b("Reference coming soon !", style = "color: black;")),
-  br( a(icon("mail-bulk"), href="mailto:fada.contact@univ-nantes.fr"),
-      "If you have any question, you can send an e-mail to",
-  br(a("fada.contact", href="mailto:fada.contact@univ-nantes.fr",  style = "color: steelblue;")) )
-  )
+  br("If you like FaDA, please cite:", tags$b("reference coming soon !", style = "color: black;"))
 }
-
-
-HeatmapOptionUI <- function(){
-  tagList(
-    tags$h3("Heatmap option:"),
-    selectInput(inputId ="color1", "Color for low levels:", c("blue","yellow","green","red","grey","violet")),
-    selectInput(inputId ="Middlecolor", "Middle level color:",   c("black","grey","white")),
-    selectInput(inputId ="color2", "Color for high levels:",   c("red","yellow","blue","green","grey","violet")),
-    radioButtons(inputId ="Clustering", "Clustering option:",
-                 choices = c(supervised = "supervised", unsupervised = "unsupervised"),
-                 selected = "supervised")
-  )
-}
-
 
 ## Server ####
 observeGeneral <- function(input,session,reacUsedTable){
   observeEvent(input$sw_html,{
       sendSweetAlert( session = session, title = NULL,
         text = tags$span(
-          tags$h3("Prepare your file:", style = "color: steelblue;"),
-          tags$br("First column or first row must be your sample identifiers with", tags$b("no replicates.", style = "color: darkred;")),
-          tags$br("Second column or row must be your group identifiers named",
-                 tags$b(" \"Group\". ",style = "color: darkred;")),
-          tags$br("Numeric or integer values start at the third column or row."),
-
-          tags$br("Table must be a tab delimited text or comma-separated values file",
-                 tags$b( "(*.txt or *.csv)" , style = "color: darkred;"),
-                 tags$b("with point(\'. \') or comma(\', \') as decimal separator"),
-                 tags$br("and"), tags$b("enjoy !"), icon("thumbs-up")),
+          tags$h3("Prepare your file:",style = "color: steelblue;"),
+          tags$b("First column or first row must be your sample identifiers with no replicates.",
+                 tags$br(), "Second column or row must be your group identifiers named \"group\".",
+                 tags$br(), "Numeric or integer values start at the third column or row.",
+                 tags$br(), tags$b("Table must be a tab delimited text file (*.txt) with", style = "color: darkred;"),
+                 span("point(\'. \') or comma(\', \') as decimal separator", style = "color:steelblue"),
+                 tags$br(),      "and",      "enjoy !", icon("thumbs-up"),
                  tags$br(),tags$br(),tags$br(),
                  tags$img(src = "tableexample.png", width = "450px", height = "350px"),
                  "or",
                  tags$br(),
                  tags$img(src = "transposetableexample.png", width = "450px", height = "211px")
-                ),
-              html = TRUE,type = 'info')
+                )
+              ),html = TRUE,type = 'info')
       })
 
-  observeEvent(input$Transform,{
+  observeEvent(input$Transform,{ ## It's
     if(input$Transform == "Log2"){
       df <- reacUsedTable()
       for(el in df[2:length(df)]){
         if(length(el[el<=0])>0){
           sendSweetAlert(session,title = NULL,
-                         text = tags$h3("Warning : Negative values detected, theses values will be set NA",
-                                        style = "color: red;")
+                         text = tags$h3("Warning : Negatives values detected, theses values will be set NA",style = "color: red;")
           )
         }
       }
     }
-    if(input$Transform == "Log10"){
-      df <- reacUsedTable()
-      for(el in df[2:length(df)]){
-        if(length(el[el<=0])>0){
-          sendSweetAlert(session,title = NULL,
-                         text = tags$h3("Warning : Negative values detected, theses values will be set NA",
-                                        style = "color: red;")
-          )
-        }
-      }
-    }
-
-
   })
 }
 
@@ -204,7 +161,7 @@ nameTable <- function(input){
     if(input$TestTable){
       return("ExampleTable")
     }else {
-      validate( need( !is.null(input$file1), "  " ) )
+      validate( need( !is.null(input$file1), "Please select a properly formatted data set" ) )
       return(input$file1$name)
     }
 
@@ -248,14 +205,12 @@ funUsedGroups <- function(usedTable){
 }
 
 funCalcTable <- function(usedTable,infoTransform){
-    validate( need( !is.null(usedTable), "Please, upload a properly formatted dataset or use the example." ) ) ####Please, upload a properly formatted dataset or use the example.#
+    validate( need( !is.null(usedTable), "Please select a properly formatted data set" ) )
     calcTable <- usedTable[,-1]
-    if (infoTransform == "Log2"){
+    if (infoTransform == "Log2")
+      {
       calcTable[calcTable <= 0] <- NA
-      calcTable <- apply(calcTable, 2, function(x) log2(x) )}
-    if (infoTransform == "Log10"){
-      calcTable[calcTable <= 0] <- NA
-      calcTable <- apply(calcTable, 2, function(x) log10(x) )
+      calcTable <- apply(calcTable, 2, function(x) log2(x) )
     }
     return(as.data.frame(calcTable))
 }
