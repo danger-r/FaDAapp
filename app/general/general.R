@@ -4,12 +4,12 @@ source("./app/general/inputFunctions.R")
 ## general UI ####
 readTableUI <- function(){
   tagList(
- conditionalPanel(condition="input.tabs != 'Tutorial'",
+ conditionalPanel(condition="input.tabs != 'Tutorial'",           #conditional panel: if the tab Tutorial is selected
     br("To use our example dataset, click the box:"),
-    switchInput(inputId = "TestTable",
+    switchInput(inputId = "TestTable",                            #switch button to use the example dataset (the 'TestTable.txt' file)
                 value = FALSE, onStatus = "success"),
 
-    conditionalPanel(condition = "!input.TestTable",
+    conditionalPanel(condition = "!input.TestTable",              #conditional panel: if TestTable (example) is not selected, display the upload bar 
       tagList(
         tags$p(tags$strong("Upload your file:")),
         tags$div(
@@ -19,20 +19,20 @@ readTableUI <- function(){
           style="display:inline-block;vertical-align:top;width:50%;"
         ),
         tags$div(
-          actionButton(inputId = "sw_html",
+          actionButton(inputId = "sw_html",                                       #action button to display help to how prepare the data table 
                        label = NULL, icon = icon("question"),
                        style="color: #fff; background-color: #337ab7; border-color: #2e6da4;"),
           style="display:inline-block;vertical-align:top;"
         ),
         tags$div(
-          downloadButton(outputId = 'Extable', label=NULL,
+          downloadButton(outputId = 'Extable', label=NULL,                        #button to downlad the example table (TestTable.txt)
                          style="color: #fff; background-color: #33b7b2; border-color: #2e6da4;"),
           style="display:inline-block;vertical-align:top;"
         ),
         bsTooltip("sw_html","How to prepare your file",placement = "bottom", trigger = "hover",
                   options = NULL), #bsTooltip display a text when the cursor trigger the button (trigger option) The target is the sw_html
         bsTooltip("Extable","Download our example file",placement = "bottom", trigger = "hover",
-                  options = NULL)
+                  options = NULL) #bsTooltip display a text when the cursor trigger the button (trigger option) The target is the Extable
       )
      )
     )
@@ -48,7 +48,7 @@ generalDataOptionUI <- function(){
                  selected = "none", inline = TRUE),
         bsPopover("Transform",
                 title= "Logarithmic transformations", "Log2 & Log10 will set all the negative values to 0",
-                  placement = "bottom", trigger = "hover", options = NULL),
+                  placement = "bottom", trigger = "hover", options = NULL),  #bsTooltip for log transform
 
 # options to choose parametric or nonparametric tests/descriptive table:
         radioButtons(inputId = "Test", "Test:",
@@ -102,7 +102,7 @@ bsPopover("Equalvariance",
 generalTableHead <- function(){
   tagList(
     tags$div(
-      h3(textOutput("filename")),
+      h3(textOutput("filename")),                                    #indicate the name of the uploaded table
       style="display: inline-block;vertical-align:top;"
     ),
     tags$div(
@@ -110,7 +110,7 @@ generalTableHead <- function(){
       style="display: inline-block;vertical-align:top;"
     ),
     tags$div(
-      actionButton(inputId = "sw_head",
+      actionButton(inputId = "sw_head",                         #action button to display header of the uploaded table
                    label = NULL, icon = icon("question"),
                    style="color: black; background-color: white;"),
       style="display:inline-block;vertical-align:bottom;"
@@ -279,7 +279,7 @@ errorOutputAlert <- function(errorValue,session){
 }
 
 funUsedTable <- function(session,infoFile,infoTestTable = FALSE,shinyDependant = TRUE){
-  #Now we take the file input into the validingInput function (to be renamed?) into the inputFunction.R file.
+                                        #take the file input into the validingInput function into the inputFunction.R file.
   if (infoTestTable == TRUE) {
     errorOutput <- validingInput("TestTable.txt")
 
@@ -322,7 +322,9 @@ funColorFunction <- function(usedTable,infoSelectColor){
   gcol <- brewer.pal(n = length(levels(group)), name = infoSelectColor)
   return(gcol)
 }
-
+                         
+                         
+                         
 ## Output to UI ####
 
 generalOutput <- function(input,output,reacUsedTable,reacNameTable){
