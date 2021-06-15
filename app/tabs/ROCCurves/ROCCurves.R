@@ -2,19 +2,18 @@
 ROCCurvesUI <- function(){
   tagList(
     tags$h3("ROC curves:",style = "color: steelblue;"),
-    uiOutput(outputId = "parameter1"),       # to choose paramters to analyse
-    uiOutput(outputId = "group1"),           # to choose first group
-    uiOutput(outputId = "group2"),           # to choose second group
-       # to choose line size
-    radioButtons(inputId = "LineSize", "Change size of curves",
+    uiOutput(outputId = "parameter1"),                                #to choose paramters to analyse
+    uiOutput(outputId = "group1"),                                    #to choose first group
+    uiOutput(outputId = "group2"),                                    #to choose second group
+    radioButtons(inputId = "LineSize", "Change size of curves",       #to choose ROC curve line size
                  choices = c(small = "small", medium = "medium", large = "large"),
                  selected = "medium", inline = TRUE),
     plotOutput(outputId = "ROCPlot", width = "50%")  %>% withSpinner(color = "#0dc5c1"),
-     downloadButton('dROCPlotTiff', label="Download as .Tiff"),
+    downloadButton('dROCPlotTiff', label="Download as .Tiff"),
     downloadButton('dROCPlotSvg', label="Download as .SVG"),
     tags$br(),
     tags$h3("ROC analysis:",style = "color: steelblue;"),
-    DTOutput(outputId ="AUC_table")  %>% withSpinner(color="#0dc5c1"),
+    DTOutput(outputId ="AUC_table")  %>% withSpinner(color="#0dc5c1"),      #table of ROC values
     tags$br()
   )
 }
@@ -61,7 +60,8 @@ funROCPlot <- function(used_Table, infoSelectColor,
                  small = 2, medium = 4, large = 6)
   colors <- brewer.pal(n = length(levels(as.factor(colnames(used_Table[,-1])))),
                             name = infoSelectColor)
-      # apply function to add several ROC curves:
+  
+      # apply function to add several ROC curves (input is 'parameter1'):
   p <- lapply(infoParameter1, function(parameter){
     gROC <- roc( as.numeric(as.factor(group_df3)), as.numeric( df4[, which(colnames(df4) == parameter)] ))
     my_roc <- plot.roc(gROC)
@@ -74,8 +74,9 @@ funROCPlot <- function(used_Table, infoSelectColor,
   return(p)
 }
 
-funAUCTable <- function(used_Table,infoGroup1,infoGroup2, calcTable){
-          #prepare a table with selected groups:
+funAUCTable <- function(used_Table,infoGroup1,infoGroup2, calcTable){       #prepare a table with selected groups (by default,
+                                                                            #first group (input is infoGroup1) and second group (input is infoGroup2) are selected
+    
   df3 <- used_Table[c(which(used_Table[,1] == infoGroup1), which(used_Table[,1] == infoGroup2)),]
   group_df3 <- df3[,1]
   df4 <- df3[,-1]
@@ -103,7 +104,7 @@ ROCCurvesOutput <- function(output, reacCalcTable, reacROCPlot,
                             reacAUCTable, reacUsedGroups,
                             reacNameTable, reacPlotHeight){
 
-  output$AUC_table <- renderDT({   datatable(reacAUCTable(),
+  output$AUC_table <- renderDT({   datatable(reacAUCTable(),               #ROC values table
                                                extensions="Buttons",
                                                options = list(pageLength = 20, searching = FALSE, dom = 'tB',
                                                               buttons = list( 'copy',
@@ -117,7 +118,7 @@ ROCCurvesOutput <- function(output, reacCalcTable, reacROCPlot,
   })
 
   output$ROCPlot <- renderPlot(height = "auto", width = "auto",
-                               {  reacROCPlot()} )
+                               {  reacROCPlot()} )                    #ROC plot
 
   output$parameter1 <- renderUI({  df <- reacCalcTable()
   selectInput("parameter1","Parameter(s) to test:", colnames(df), selected = colnames(df)[1], multiple = TRUE)  })
@@ -139,6 +140,7 @@ ROCCurvesOutput <- function(output, reacCalcTable, reacROCPlot,
 
  }
 
+                      
 ## Download function: ####
 ROCDownload <- function(input,output,reacROCPlot){
   output$dROCPlotTiff = downloadHandler(filename =
@@ -154,3 +156,4 @@ ROCDownload <- function(input,output,reacROCPlot){
                                          print( reacROCPlot() )
                                          dev.off()                      })
 }
+## End
