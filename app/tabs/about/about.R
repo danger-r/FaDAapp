@@ -9,70 +9,43 @@ aboutUI <- function(){
 about <- function(){
   Text1 <- function(){
     text = tags$span(
-      tags$h3("Fast data visualization and analysis of biological data", style = "color: #337ab7;"),
-      tags$b("FaDA",style = "color: #337ab7;"), "is a user-friendly data visualization and analysis tool developed in R programming with RShiny web application developer. FaDA provides users of non-computational background to analyze their data for statistical analysis and quick visualization tools. This application is useful for common laboratory data outputs, including quantitative PCR, Flow Cytometry or ELISA.",
+      tags$h3("To perform a rapid analysis of your beloved data !", style = "color: blue;"),
+      "The Shiny web application", tags$b("FaDA",style = "color: blue;"), "has been designed to to accelerate common lab data analyses, allowing a first glance at data, highlighting significative differences, significant associations/correlations or identifiying potential outliers. Different type of data can be used such as gene expression or cytometry measures.",
+      tags$br(),
+      tags$br(),
+      tags$b("Various analyses and visulaisation can be performed:"),
+      tags$br(),
+      tags$li("Higlight significative differences: the descriptive table displays descriptive statistics and the comparison table displays  statistical analyses with unadjuste p-values and adjusted p-values. Results depends of choosen parameters; for more details, see tutorial page."),
+      tags$li("plot of each parameter, using whisker, dot, violin or bar plot"),
+      tags$li("Heatmap with supervised or unsupervised samples clustering"),
+      tags$li("Principal Component Analysis to highlight variability in your dataset"),
+      tags$li("Correlation of parameters"),
+      tags$li("ROC curves"),
+
+      tags$h3("From the" , a("CRTI", href="http://crti.univ-nantes.fr/", style = "color: steelblue;"), " Research Center of Nantes !", style = "color: blue;"),
+      tags$br("This work was conducted in the CRTI in Nantes (France), in the context of the ", tags$b("Fondation Centaure", style = "color: steelblue;")," (RTRS), which supports a French transplantation research network, the ", tags$b("DHU Oncogreffe", style = "color: steelblue;")," and the ", tags$b("LabEX IGO", style = "color: steelblue;"), " supported by the National Research Agency via the investment of the future program ANR-11-LABX-0016-01 and the LABEX TRANSPLANTEX (ANR-11-LABX-0070_TRANSPLANTEX). This research was also supported by ", tags$b("INSERM", style = "color: steelblue;"), " and ", tags$b("IHU-CESTI", style = "color: steelblue;"), " institutes receiving financial support from the French Government managed by the National Research Agency (Investment into the Future Program ANR-10-IBHU-005), Nantes Metropole, and the Pays de la Loire Region."),
+      tags$h3("People that participated to this project:", style = "color: blue;"),
+
+      tags$li( a("Richard Danger", href="mailto:richard.danger@univ-nantes.fr",  style = "color: steelblue;"),
+           "(PhD), research associate in the CRTI of Nantes (France), supported by the a ", tags$b("Marie Sklodowska-Curie fellowship", style = "color: steelblue;"), "from the European Commission's H2020 framework."),
+      tags$li("Yodit Feseha"),
+      tags$li("Quentin Moiteaux"),
+      tags$li("Gérard Ramstein"),
+      tags$li("Sophie Brouard"),
+      tags$br(),
+      tags$br("We are most grateful to the ", tags$b("GenoBiRD Core Facility", style = "color: steelblue;")," for its technical support."),
       tags$br(),
 
-      tags$br(),
-      tags$h4("FaDA Visualization &  Analysis Tools", style="color: #33b7b2;"),
-      tags$li("Descriptive Statistics- A Summary Statistical Analysis of Data Input", style="list-style-type: square;"),
-      tags$li("Batch Plots- Data plot of parameters using Whisker, Dot, Violin or Bar Type of graphs", style="list-style-type: square;"),
-      tags$li("Heatmap & PCA Plots- Supervised or Unsupervised Sample Clustering with interactive plot options", style="list-style-type: square;"),
-      tags$li("Data Correlation- Evidencing Parameter Associations", style="list-style-type: square;"),
-      tags$li("ROC curves- Characterizing Discriminative Characteristics", style="list-style-type: square;"),
-
+      tags$h3("Please cite:", style = "color: blue;"), tags$b("reference coming soon !", style = "color: black;"),
 
       tags$br(),
-      a(icon("mail-bulk"), href="mailto:fada.contact@univ-nantes.fr"),
-            "If you have any question, you can send an e-mail to",
-      a("fada.contact", href="mailto:fada.contact@univ-nantes.fr",  style = "color: steelblue;"),
-      tags$br(),
-
-      tags$br(),
-      tags$h4("Acknowledgment", style= "color: #33b7b2"),
-      tags$h5("Project Contribution -Yodit Feseha, Quentin Moiteaux, Gerard Ramstein, Sophie Brouard & Richard Danger"),
-      a("Richard Danger", style = "color: steelblue;"), "(PhD), research associate in the CRTI of Nantes (France), was supported by the", tags$b("Marie Sklodowska-Curie Fellowship", style = "color: steelblue;"), "from the European Commission's H2020 framework under the Grant Agreement No. 706296.",
-      a("Yodit Feseha", style = "color: steelblue;"), "was supported by a Marie Sklodowska-Curie fellowship from the European Commission's H2020 research and innovation programme under the Innovative Training Network (ITN) programme Grant Agreement No. 721532.",
-      tags$br(),
-      "This work was conducted in the CRTI in Nantes (France), in the context of the", tags$b("Foundation Centaure", style = "color: steelblue;")," (RTRS), which supports a French Transplantation Research Network, the ", tags$b("DHU Oncogreffe", style = "color: steelblue;")," and the", tags$b("LabEX IGO", style = "color: steelblue;"), "supported by the National Research Agency via the investment of the future program ANR-11-LABX-0016-01 and the LABEX TRANSPLANTEX (ANR-11-LABX-0070_TRANSPLANTEX). This research was also supported by", tags$b("INSERM", style = "color: steelblue;"), "and", tags$b("IHU-CESTI", style = "color: steelblue;"), "institutes receiving financial support from the French Government managed by the National Research Agency (Investment into the Future Program ANR-10-IBHU-005), Nantes Metropole, and the Pays de la Loire Region.",
-      tags$br(),
-      tags$br(),
-      "Technical Support and application hosting:", a("GenoBird Core Facility", href="https://pf-bird.univ-nantes.fr/", style = "color: steelblue;"),
-      tags$br(),
-
-
-      tags$br(),
-      tags$h4("Citation", style = "color: #33b7b2;"),
-      "Programming this application cost tears and sweat. If you like FaDA and use it, please consider citing the app:",  tags$b("Reference coming soon !", style = "color: black;"),
-      tags$br(),
-      tags$b("FaDA",style = "color: #337ab7;"), "application code is available through Github:",  tags$b("Link coming soon !", style = "color: black;"),
-      tags$br(),
-
-
-      tags$br(),
-      tags$h4("Terms of Use", style = "color: #33b7b2;"),
-      "This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License.",
-      tags$br(),
-      "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE",
-      tags$br(),
-      "See the GNU General Public License for more details at :", a("GNU General Public License", href="https://www.gnu.org/licenses/", style = "color: steelblue;"),
-
-      tags$br(),
-      "Uploaded data and analysis results will not be saved on our servers. However, the application is provided", '" as is "', "without warranty of any kind, and thus, you must refrain fom uploading any confidential data. You may instead download the code and run the app locally on your private computer and network. We are not responsible for the confidentiality, availability, security, loss, misuse or misappropriation of any data you submit to this application.", style = "color: black;",
-
-      tags$br(),
-      tags$br(),
-      img(src= "logo-pf-bird.png", width =100, style="margin:50px 0px"),
-      img(src= "logo.png", width = 150), style="margin:50px 10px", #, class = "pull-right"),
-      img(src= "INSERM-logo.png", width = 150, style="margin:50px 10px"),
-      img(src= "Logo-IGO.png", width = 150, style="margin:50px 10px"),
-      img(src= "logo-EU.png", width = 100, style="margin:50px 10px"),
-      img(src= "logo-mca.png", width = 100, style="margin:50px 10px"),
-      img(src= "Univ.png", width = 150, style="margin:50px 10px"),
-      hr(),
-      tags$h4("Copyright 2020 Center of Research in Transplantation and Immunology
-Version 2020.01.21", align="center"),
-
+      img(src= "logo-pf-bird.png", width =100),
+      img(src= "logo.png", width = 200), #, class = "pull-right"),
+      img(src= "INSERM-logo.png", width = 200),
+      img(src= "Logo-IGO.png", width = 200),
+      img(src= "logo-EU.png", width = 200),
+      img(src= "logo-mca.png", width = 100),
+      img(src= "Univ.png", width = 100),
 
       html = TRUE)
   }
@@ -83,10 +56,9 @@ observeUploadFileToChangeTabs <- function(input,session){
   observeEvent(c(input$file1,input$TestTable),{
     if(input$tabs == "about"){
       if(!is.null(input$file1) | input$TestTable == TRUE)
-        updateTabsetPanel(session, "tabs", selected = "tableDescr")
+      updateTabsetPanel(session, "tabs", selected = "tableDescr")
     }
   })
-
 }
 
 ## Output to UI ####
