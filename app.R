@@ -32,7 +32,7 @@ if (!require("svglite"))
 library(svglite)          #For svg images
 
 
-# ====== files Sources ####
+# ====== files Sources (which are in corresponding tab) ####
 source("./app/general/general.R")
 source("./app/tabs/about/about.R")
 source("./app/tabs/about/insructions.R")
@@ -43,7 +43,7 @@ source("./app/tabs/correlation/correlation.R")
 source("./app/tabs/ROCCurves/ROCCurves.R")
 
 
-# === Define UI for application that draws a histogram
+# === Define UI for application ####
 ui <- fluidPage(theme = shinytheme("united"),
 
 # titlePanel ####
@@ -61,7 +61,8 @@ ui <- fluidPage(theme = shinytheme("united"),
                   div(img(src= "IconOct19.png", class = "pull-left"),
                       div(img(src= "logo.png", class = "pull-right")) )   ),
 
-# sidebarPanel: ####
+                
+# sidebarPanel (sidebar with conditional panels, to hide unecessary options, depending of the tabset): ####
                 sidebarPanel( width = 4,# Input: Select a file
                               conditionalPanel(
                                 condition="input.TestTable | input.tabs != 'about' & input.tabs != 'Tutorial'",
@@ -87,7 +88,8 @@ ui <- fluidPage(theme = shinytheme("united"),
 # mainPanel ####
                 mainPanel(
                   tabsetPanel(type = "pills",id = 'tabs',
-   ### The following functions are defined in the corresponding R file
+                              
+   ### The following functions are defined in the corresponding R file:
                                   tabPanel("About", icon = icon("eye"), value = 'about',
                                                   #tags$style(".well {background-color:red;}"),
                                                   aboutUI()#Defined in the about.R
@@ -212,3 +214,4 @@ server <- function(input, output, session) {
 ###
 # Run the application
 shinyApp(ui = ui, server = server)
+###End
