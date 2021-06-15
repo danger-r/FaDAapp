@@ -4,12 +4,14 @@ heatmapPcaUI <- function(){
     tags$h3("Heatmap:", style = "color: steelblue;"),
     plotlyOutput(outputId ="Heatmap", width = "90%") %>% withSpinner(color="#0dc5c1")
 )}
+
 PCA_UI <- function(){
       tagList(
     tags$h3("Principal Component Analysis:", style = "color: steelblue;"),
     plotlyOutput(outputId ="ACP", width = "80%") %>% withSpinner(color="#0dc5c1")
   )
 }
+
 FixedPCA_UI <- function(){
   tagList(
     tags$h3("Principal Component Analysis:", style = "color: steelblue;"),
@@ -18,6 +20,7 @@ FixedPCA_UI <- function(){
     downloadButton('dFixedPCASvg', label="Download as .SVG")
   )
 }
+
 FixedHeatmap_UI <- function(){
       tagList(
         tags$h3("Heatmap:",style = "color: steelblue;"),
@@ -34,14 +37,14 @@ FixedHeatmap_UI <- function(){
 ACP <- function(input,used_groups,calc_table,colorFunction){
   ACP <- function(){
     validate( need( !is.null(calc_table()), "  " ) )
-    #Col_group = c( "darkgreen", "blue", "lightgrey", "cyan2", "orange", "darkred", "red", "blueviolet")
 
-    #Remplacement des NA par KNN, nécessite une transposition
+    #Remplacement des NA par KNN, need a transposition
     return(funACP(used_groups(), calc_table(), colorFunction(), input$file1$name))
   }
   return(ACP)
 }
-FixedPCA <- function(input,used_groups,calc_table,colorFunction){
+
+FixedPCA <- function(input,used_groups,calc_table,colorFunction){        #static PCA
   FixedPCA <- function(){
     validate( need( !is.null(calc_table()), " " ) )
     #Remplacement des NA par KNN, nécessite une transposition
@@ -60,7 +63,7 @@ Heatmap <- function(){
   return(Heatmap)
 }
 
-FixedHeatmap <- function(input, used_groups, calc_table, colorFunction) {
+FixedHeatmap <- function(input, used_groups, calc_table, colorFunction) {        #static heatmap
   FixedHeatmap <- function(){
     validate( need( !is.null(calc_table()), " " ) )
 
@@ -68,7 +71,7 @@ FixedHeatmap <- function(input, used_groups, calc_table, colorFunction) {
   return(FixedHeatmap)
 }
 
-## Independant Functions ####
+## Independant Functions ###
 
 funHeatmap <- function(used_Groups,calc_Table,colors,infoColor1,infoMiddleColor,infoColor2,infoClustering,infoFilename){
   Groups = as.factor(used_Groups)
@@ -77,8 +80,7 @@ funHeatmap <- function(used_Groups,calc_Table,colors,infoColor1,infoMiddleColor,
   breaks=seq(-1.5, 1.5, by=0.1)
   breaks=append(breaks, 10)
   breaks=append(breaks, -10, 0)
-  #if(length(calc_Table) < 200) {rowFontSize = 1.5 - 0.5*(length(calc_Table)/100)} else {rowFontSize = 0.5}
-  #if(length(calc_Table[,1]) < 200) {colFontSize = 1.3 - 0.4*(length(calc_Table[,1])/100)} else {colFontSize = 0.5}
+  
   mycol <- colorpanel(n=length(breaks)-1,low= infoColor1 , mid=infoMiddleColor,high=infoColor2)
 
   if (infoClustering == "supervised") {dendro = FALSE} else {dendro = TRUE}
@@ -89,7 +91,6 @@ funHeatmap <- function(used_Groups,calc_Table,colors,infoColor1,infoMiddleColor,
                            colors=mycol,
                            breaks=breaks
   ) %>%  partial_bundle()
-
 
   heatmapPlot <- heatmapPlot %>% config(plot_ly(), toImageButtonOptions= list(filename = paste(infoFilename,"_heatmap",sep = "")))
   return(heatmapPlot)
@@ -236,17 +237,4 @@ FixedPCADownload <- function(input,output,reacFixedPCA){
                                               print( reacFixedPCA() )
                                               dev.off()                      })
 }
-
-
-
-
-# PCADownload <- function(input,output,reacPCA){
-#   output$dPCA <- downloadHandler(filename =
-#                                    reactive(paste(input$file1$name,"_PCA.png",sep = "")),
-#                                      content = function(file, compression = "lzw", res = 600) {
-#                                        path_split<-unlist(strsplit(file,'\\\\'))
-#
-#                                        download_path<-paste(path_split[1:length(path_split)-1],collapse='/')
-#                                        withr::with_dir(download_path, orca(reacPCA(), path_split[length(path_split)],debug = FALSE))
-#                                      }, contentType = "image/png")
-# }
+##End
