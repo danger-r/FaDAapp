@@ -56,9 +56,6 @@ validingInput <- function(infoFileDatapath,decSeparator = "."){
     }
   }
 
-
   return(list("error" = 0, "dataframe" = df))
 }
-
-
-
+####End
