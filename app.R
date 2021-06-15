@@ -62,7 +62,7 @@ ui <- fluidPage(theme = shinytheme("united"),
                       div(img(src= "logo.png", class = "pull-right")) )   ),
 
                 
-# sidebarPanel (sidebar with conditional panels, to hide unecessary options, depending of the tabset): ####
+# sidebarPanel (sidebar with conditional panels, to hide unecessary options, depending of the selected tabset): ####
                 sidebarPanel( width = 4,# Input: Select a file
                               conditionalPanel(
                                 condition="input.TestTable | input.tabs != 'about' & input.tabs != 'Tutorial'",
@@ -87,10 +87,11 @@ ui <- fluidPage(theme = shinytheme("united"),
 
 # mainPanel ####
                 mainPanel(
-                  tabsetPanel(type = "pills",id = 'tabs',
+                  tabsetPanel(type = "pills", id = 'tabs',
                               
    ### The following functions are defined in the corresponding R file:
-                                  tabPanel("About", icon = icon("eye"), value = 'about',
+                        #About###
+                                tabPanel("About", icon = icon("eye"), value = 'about',
                                                   #tags$style(".well {background-color:red;}"),
                                                   aboutUI()#Defined in the about.R
                                                ),
@@ -135,19 +136,19 @@ ui <- fluidPage(theme = shinytheme("united"),
                           )
                 )
 
-#####
+
 
 ######
 # =======Define server
 server <- function(input, output, session) {
 
-# ======Call Server Functions ####
+# ======Call Server Functions (reactive functions) ####
 # General:
-  reacUsedTable <- usedTable(input,session)
-  reacUsedGroups <- usedGroups(input,reacUsedTable)
-  reacCalcTable <- calcTable(input,reacUsedTable)
-  reacColorFunction <- colorFunction(input,reacUsedTable)
-  reacNameTable <- nameTable(input)
+  reacUsedTable <- usedTable(input,session)               #formatted data table from uploaded table
+  reacUsedGroups <- usedGroups(input,reacUsedTable)       #groups
+  reacCalcTable <- calcTable(input,reacUsedTable)         #transformed data table from uploaded table
+  reacColorFunction <- colorFunction(input,reacUsedTable) #selected colors
+  reacNameTable <- nameTable(input)                       #parameter names from uploaded table
   observeGeneral(input,session,reacUsedTable)
 
 # About:
