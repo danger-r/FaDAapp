@@ -6,7 +6,7 @@ batchPlotUI <- function(){
 }
 
 ## Server Functions ####
-batchPlot <- function(input,used_groups,calc_table,colorFunction){
+batchPlot <- function(input,used_groups,calc_table,colorFunction){          #input parameters
   Plot1 <- function(){
     validate( need( !is.null(calc_table()), "Please select a properly formatted data set" ) )
     df <- calc_table()
@@ -21,30 +21,26 @@ MoreBatchPlot <- function(input,used_groups,calc_table,colorFunction){
     validate( need( !is.null(calc_table()), "Please select a properly formatted data set" ) )
     df <- calc_table()
     graphList <- funMoreBatchPlot(used_groups(),df,t(df),colorFunction(),input$Graph)
-    #grid.arrange(grobs = graphList, ncol= 2) #Arrange the graphs output
     marrangeGrob(graphList, nrow=2, ncol=2, vp=viewport(width=0.9, height=0.9))
-    #marrangeGrob(grobs = graphList, nrow=2,ncol=2, layout, vp=viewport(width=0.9, height=0.9))
-    #g <- arrangeGrob(grobs = graphList)#, nrow=2,ncol=2, layout, vp=viewport(width=0.9, height=0.9))
   }
   return(Plot2)
 }
 
 ## Independant Functions ####
 funBatchPlot <- function(used_Groups,calc_Table,tCalc_Table,colors,infoGraph){
-  if ( length(levels(as.factor(used_Groups))) * length(colnames(calc_Table)) > 25 ) {
+  if ( length(levels(as.factor(used_Groups))) * length(colnames(calc_Table)) > 25 ) {               #to define maximum plot to display: n of groups x parameters <25
     print("Too many data")
     stop("Too many data to plot on the screen, please download the file instead")
   }
 
   rown <- rownames(calc_Table)
-  #print(rown)
 
-    graphList <- lapply(1:nrow(tCalc_Table),function(i){
-
+  graphList <- lapply(1:nrow(tCalc_Table),function(i){                      #graph function; apply function for all parameters; 
+                                                                            #format of the graph is dependant on infoGraph radioButton (whiskers, dot...)
 
     gene= rownames(tCalc_Table)[i]
     datatoto <- data.frame(Expression = tCalc_Table[i,], group = as.factor(used_Groups), id = rown)
-    if (infoGraph == "whiskers") {
+    if (infoGraph == "whiskers") {                                                                     #whiskers plot according infoGraph input
       plot <- ggplot(data = datatoto, aes(x = group, y = Expression, fill = group)) +
         geom_boxplot(col="black", outlier.colour = NA) + theme_classic() +
         theme(plot.title = element_text(hjust = 1, color="darkred", size=10, face="bold.italic"),
@@ -54,7 +50,7 @@ funBatchPlot <- function(used_Groups,calc_Table,tCalc_Table,colors,infoGraph){
         theme(legend.position="none") +
         labs(title= gene, x= "", y="")
     }
-    else{ if (infoGraph == "point") {
+    else{ if (infoGraph == "point") {                                                                     #point plot according infoGraph input
       plot <- ggplot(data = datatoto, aes(x = group, y = Expression, color = group)) + theme_classic() +
         theme(plot.title = element_text(hjust = 1, color="darkred", size=10, face="bold.italic"),
               axis.text.x=element_text(angle= 45, hjust = 1) )+
@@ -64,7 +60,7 @@ funBatchPlot <- function(used_Groups,calc_Table,tCalc_Table,colors,infoGraph){
         labs(title= gene, x= "", y="")
     }
 
-      else{ if (infoGraph == "violin") {
+      else{ if (infoGraph == "violin") {                                                                     #violin plot according infoGraph input
         plot <- ggplot(data = datatoto, aes(x = group, y = Expression, fill = group) ) +
           geom_violin(mapping = NULL, data = NULL, stat = "ydensity", position = "dodge", scale = "area") +
           theme_classic() +
@@ -76,7 +72,7 @@ funBatchPlot <- function(used_Groups,calc_Table,tCalc_Table,colors,infoGraph){
       }
 
         else{
-          print(datatoto$id)
+          print(datatoto$id)                                                                     #barplot according infoGraph input
           datatoto$id <- factor(datatoto$id, levels = rown)
           plot <- ggplot(data = datatoto, aes(x = id, y = Expression, fill = group)) +
             geom_bar(stat = "identity") + theme_classic() +
@@ -92,7 +88,8 @@ funBatchPlot <- function(used_Groups,calc_Table,tCalc_Table,colors,infoGraph){
   })
   return(graphList)
 }
-funMoreBatchPlot <- function(used_Groups, calc_Table,tCalc_Table,colors,infoGraph){
+
+funMoreBatchPlot <- function(used_Groups, calc_Table,tCalc_Table,colors,infoGraph){     #same graph but only to download as too many plots to be displayed 
   rown <- rownames(calc_Table)
 
     graphList <- lapply(1:nrow(tCalc_Table),function(i){
@@ -159,6 +156,7 @@ MoreBatchPlotOutput <- function(output,reacMoreBatchPlot){
   output$Plot2 <- renderPlot({    reacMoreBatchPlot()    })
 }
 
+
 ## Download ####
 batchPlotDownload <- function(input,output, reacUsedTable, reacBatchPlot,reacMoreBatchPlot){
   output$dPlot1 =   downloadHandler(filename =reactive(paste(input$file1$name,"_Graphs.pdf",sep = "")),
@@ -177,3 +175,4 @@ batchPlotDownload <- function(input,output, reacUsedTable, reacBatchPlot,reacMor
                                       #dev.off()
                                       }
   } )}
+## End
