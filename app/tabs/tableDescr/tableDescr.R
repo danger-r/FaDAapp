@@ -13,12 +13,12 @@ tableDescrMainUI <- function(){
   )
 } #Display on the main panel
 
-#Highlight p-values:
+#to highlight p-values:
 pValSidebarUI <- function(){
   tagList( sliderInput("pValSelect", "Highlight in the table p-values above the selected threshold: ",0.0001, 1.000, 0.05),
 )}
 
-# select digits:
+# to select n of digits to display:
 SelDigitsSidebarUI <- function(){
   tagList(sliderInput("seldigits","Adjust number of digits to display in the table: ",0, 8, 3)
   )}
@@ -70,7 +70,7 @@ plotDescr <- function(input,used_groups,calc_table,colorFunction,mytableStat){
 funMytableDescr <- function(used_Groups,calc_Table,infoTest){
   ngroup <- length(levels(as.factor(used_Groups)))
 
-  if (infoTest == "parametric") {
+  if (infoTest == "parametric") {                                                        #parametric -> mean, SD
     ValDesc <- matrix(nrow= ngroup*2+1, ncol= length(colnames(calc_Table) ),
                       dimnames = list(c(paste("mean-", levels(as.factor(used_Groups))),
                                         paste("sd-", levels(as.factor(used_Groups))), "Normality p-value") ,
@@ -84,7 +84,7 @@ funMytableDescr <- function(used_Groups,calc_Table,infoTest){
     }
   }
 
-  else { #unparametric
+  else {                                                        #unparametric -> median, IQR
     ValDesc <- matrix(nrow= ngroup*2, ncol= length(colnames(calc_Table) ),
                       dimnames = list(c(paste("median-", levels(as.factor(used_Groups))), paste("IQR-", levels(as.factor(used_Groups)))) ,
                                       colnames(calc_Table) ) )
@@ -97,7 +97,6 @@ funMytableDescr <- function(used_Groups,calc_Table,infoTest){
 
 
   ValDesc2 <- format(ValDesc, digits = 4)
-  #print(ValDesc2, bordered = TRUE )
   return(ValDesc2)
 }
 
@@ -106,18 +105,19 @@ funMytableStat <- function(used_Groups,calc_Table,infoDesign,
                            infoTest, infoCorrection,infoEqualvariance, infopValSelect, infoseldigits){
 
   Val <- matrix(nrow= 1, ncol= length(colnames(calc_Table) ), dimnames = list(list("p.value"), colnames(calc_Table) ) )
-  #pour 2 groups:
+
+ ###for 2 groups:
   if (length(levels(as.factor(used_Groups))) == 2) {
     #paired/unpaired:
     if (infoDesign == "paired") {P = TRUE} else {P = FALSE}
-    if (infoEqualvariance == "TRUE") {VarEq = TRUE} else {VarEq = FALSE}
+    if (infoEqualvariance == "TRUE") {VarEq = TRUE} else {VarEq = FALSE} ## for welch t.test
 
-    #parametric
+    #parametric -> t.test
     if (infoTest == "parametric") {
       Val[1,] <- apply( calc_Table, 2, function (x)
         t.test( x ~ used_Groups, data = calc_Table, paired = P, var.equal = VarEq, na.omit = FALSE)$p.value )
     }
-    else{
+    else{         #nonparametric -> wilcox/MannWhitney test
       Val[1,] <- apply( calc_Table, 2, function (x)
         wilcox.test( x ~ used_Groups, data = calc_Table, paired = P)$p.value ) }
 
@@ -129,7 +129,8 @@ funMytableStat <- function(used_Groups,calc_Table,infoDesign,
   return(list("table"=Val2, "pValSelect"=infopValSelect))
   }
 
-  #for more than 2 groups
+                   
+###for more than 2 groups
   else {
     if (infoTest == "parametric") {  #parametric
       if (infoDesign == "paired") {  #paired
@@ -139,7 +140,7 @@ funMytableStat <- function(used_Groups,calc_Table,infoDesign,
                            dimnames = list("pairwise comparisons", colnames(calc_Table) ) )
         #      ValTukey <- apply( df2, 2,function(y, f)  TukeyHSD( aov( y ~ f) )$f[,4], f = group )
       }
-      else {  #unpaired
+      else {  #unpaired -> Anova
 
         Val[1,] <-  apply( calc_Table, 2, function(y)  anova(lm( y ~ as.factor(used_Groups)))$"Pr(>F)"[1] )
         temp <- TukeyHSD( aov( calc_Table[,1] ~ factor(used_Groups)) )$`factor(used_Groups)`
@@ -148,7 +149,7 @@ funMytableStat <- function(used_Groups,calc_Table,infoDesign,
         ValTukey <- apply( calc_Table, 2,function(y)  TukeyHSD( aov( y ~ as.factor(used_Groups) ) )$`as.factor(used_Groups)`[,4])
       }
     }
-    else { #unparametric
+    else { #unparametric -> Kruskal Wallis
       if (infoDesign == "paired") {  #paired
         validate( "Sorry, Friedman test is not implemented yet" )
       }
@@ -166,7 +167,7 @@ funMytableStat <- function(used_Groups,calc_Table,infoDesign,
       }
     }
 
-    p.adj <- apply( Val, 1, function (x)
+    p.adj <- apply( Val, 1, function (x)                            #multiple testing correction
       p.adjust( x, method = infoCorrection, n = length(Val) ) )
     colnames(p.adj) = paste("p.adjusted ",infoCorrection,sep = "")
 
@@ -179,7 +180,7 @@ funMytableStat <- function(used_Groups,calc_Table,infoDesign,
 }
 
 funPlotDescr <- function(used_Groups,calc_Table,gcol, data,
-                         infoGraph,infoFilename,infoPlotTitle="",infoPlotYAxis=""){
+                         infoGraph,infoFilename,infoPlotTitle="",infoPlotYAxis=""){       #interactive plots of selected parameter
   dim(data) <- length(data)
   group <- as.factor(used_Groups)
   rown <- rownames(calc_Table)
@@ -188,7 +189,7 @@ funPlotDescr <- function(used_Groups,calc_Table,gcol, data,
     datatoto <- data.frame(Value = elem$value, group = group, id = rown )
     ec <- max(elem$value)-min(elem$value)
 
-    if (infoGraph == "whiskers") {
+    if (infoGraph == "whiskers") {                                         #whiskers (according infoGraph input from radioButton)
       plot <-
         ggplot(data = datatoto, aes(x = group, y =  Value, fill = group, id = id) ) +
         geom_boxplot(col="black", outlier.shape = NA) + theme_classic() +
@@ -202,7 +203,7 @@ funPlotDescr <- function(used_Groups,calc_Table,gcol, data,
         #annotate("text",x = levels(group)[length(levels(group))], y = max(elem$value)-ec/20+0.1*ec, label = format(elem$pvalue, digits = 4), size = 4) #Display P-value on the graph
 
     }
-    else{ if (infoGraph == "point") {
+    else{ if (infoGraph == "point") {                                         #point (according infoGraph input from radioButton)
       plot <-
         ggplot(data = datatoto, aes(x = group, y = Value, colour = group, id = id) ) +
         theme_classic() +
@@ -216,7 +217,7 @@ funPlotDescr <- function(used_Groups,calc_Table,gcol, data,
       #+ #Display P-value on the graph        annotate("text",x = levels(group)[length(levels(group))], y = max(elem$value)-ec/20+0.1*ec, label = elem$pvalue, size = 4)
 
     }
-      else{ if (infoGraph == "violin") {
+      else{ if (infoGraph == "violin") {                                         #violin plot (according infoGraph input from radioButton)
         plot <-
           ggplot(data = datatoto, aes(x = group, y = Value, fill = group) ) +
           geom_violin(mapping = NULL, data = NULL, stat = "ydensity", position = "dodge", draw_quantiles = NULL, trim = TRUE,
@@ -232,7 +233,7 @@ funPlotDescr <- function(used_Groups,calc_Table,gcol, data,
         #+ #Display P-value on the graph          annotate("text",x = levels(group)[length(levels(group))], y = max(elem$value)-ec/20+0.1*ec, label = elem$pvalue, size = 4)
       }
 
-        else{
+        else{                                                       #barplot (according infoGraph input from radioButton)
           datatoto$id <- factor(datatoto$id, levels = rown)
           plot <-
             ggplot(data = datatoto, aes(x = id, y = Value, fill = group) ) +
@@ -247,7 +248,6 @@ funPlotDescr <- function(used_Groups,calc_Table,gcol, data,
                  y = infoPlotYAxis, x = "Samples") +
             annotate("text",x = levels(datatoto$id )[length(levels(datatoto$id ))-1], y = 1.2*max(elem$value), label = elem$gene, size = 4)
           #+ #Display P-value on the graph    annotate("text",x = levels(datatoto$id )[length(levels(datatoto$id ))-1], y = 1.1*max(elem$value), label = elem$pvalue, size = 4)
-
 
         }
       }
@@ -319,3 +319,4 @@ tableDescrOutput <- function(output,reacMytableStat,reacMytableDescr,reacPlotDes
   })
 
 }
+##End
