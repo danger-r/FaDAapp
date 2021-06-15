@@ -1,39 +1,38 @@
-##library########
+# ====== import R libraries: ####
 library(shiny)            #For shiny
 library(shinythemes)      #For graphics of shiny interface
 library(shinycssloaders)  #For the spinner of load during the computing of the functions
 library(shinyBS)          #For tooltips, popovers and alerts
+library(shinyWidgets)     #For some shiny functions
 library(ggplot2)          #Plot graphs
 library(plotly)           #Plot interactives graphs
 library(gridExtra)        #Grid display
 library(grid)             #Grid display
 library(gplots)           #For colorpanels in the heatmap
-library(ComplexHeatmap)  #For  heatmaps
-library(circlize)        #For  heatmaps
+library(ComplexHeatmap)   #For  heatmaps
+library(circlize)         #For  heatmaps
 library(heatmaply)        #For interactive heatmaps
-library(corrplot)        #For the correlogram
-
-
+library(corrplot)         #For correlogram
+#library(ggcorrplot)       #For interactive correlogram
+library(data.table)       #For the import table (fread)
+library(DT)               #For datatabkes functions
 if (!requireNamespace("BiocManager", quietly = TRUE)){
   install.packages("BiocManager")
   if(!require("impute"))
     BiocManager::install("impute")
 }
 library(impute)           #For knn on the heatmap when there is NA values
-
 library(FSA)              #For some tests (DunnTest)
-library(DT)               #For datatabkes functions
-library(shinyWidgets)     #For some shiny functions
 library(RColorBrewer)     #For the color palette
-library(pROC)             #For ROCCurves
+library(pROC)             #For ROC Curves
 if (!require("devtools"))
   install.packages("devtools")
 if (!require("svglite"))
   devtools::install_github("r-lib/svglite")
 library(svglite)          #For svg images
-library(parallel)
 
-## Sources ####
+
+# ====== files Sources ####
 source("./app/general/general.R")
 source("./app/tabs/about/about.R")
 source("./app/tabs/about/insructions.R")
@@ -42,11 +41,12 @@ source("./app/tabs/batchPlot/batchPlot.R")
 source("./app/tabs/heatmapPca/heatmapPca.R")
 source("./app/tabs/correlation/correlation.R")
 source("./app/tabs/ROCCurves/ROCCurves.R")
-#####
 
-# Define UI for application that draws a histogram
+
+# === Define UI for application that draws a histogram
 ui <- fluidPage(theme = shinytheme("united"),
-                #titlePanel ####
+
+# titlePanel ####
                 titlePanel(" ",windowTitle = "FaDA"),
                 tags$head(
                   tags$style(
@@ -61,7 +61,7 @@ ui <- fluidPage(theme = shinytheme("united"),
                   div(img(src= "IconOct19.png", class = "pull-left"),
                       div(img(src= "logo.png", class = "pull-right")) )   ),
 
-           #sidebarPanel ####
+# sidebarPanel: ####
                 sidebarPanel( width = 4,# Input: Select a file
                               conditionalPanel(
                                 condition="input.TestTable | input.tabs != 'about' & input.tabs != 'Tutorial'",
@@ -71,30 +71,32 @@ ui <- fluidPage(theme = shinytheme("united"),
                                           generalDataOptionUI() ),
                               conditionalPanel(condition = "input.tabs == 'Tutorial'",
                                                TutorialOptionUI() ),
-                              conditionalPanel(condition =
-                                                 "input.tabs == 'tableDescr' | input.tabs == 'correlation'",
-                                               generalParametricOptionUI()),
                               conditionalPanel(condition = "input.tabs == 'tableDescr' ",
-                                          plotOptionUI() ), #Defined in the tableDescr.R
+                                               TestParametricOptionUI() ),
+                              conditionalPanel(condition = "input.tabs == 'tableDescr' ",
+                                               pValSidebarUI(), SelDigitsSidebarUI()), #Defined in the tableDescr.R
                               conditionalPanel(condition = "input.tabs == 'correlation'",
-                                          corrSidebarUI() ),
+                                               corrPlotOptionUI(), corrSidebarUI(),  #to select threshold for highlighting correlation values
+                                          pValCorrSidebarUI()), #to select threshold for highlighting pvalues
                               conditionalPanel(condition = "input.tabs == 'Heatmap_PCA' ",
-                                               HeatmapOptionUI() )
+                                               HeatmapOptionUI() ),
+                              conditionalPanel(condition = "input.tabs == 'rocCurves' ")
+
                               ),
 
-                #mainPanel ####
+# mainPanel ####
                 mainPanel(
                   tabsetPanel(type = "pills",id = 'tabs',
-                              ### The following functions are defined in the corresponding R file
+   ### The following functions are defined in the corresponding R file
                                   tabPanel("About", icon = icon("eye"), value = 'about',
                                                   #tags$style(".well {background-color:red;}"),
                                                   aboutUI()#Defined in the about.R
                                                ),
-                              #Tutorial###
+                        #Tutorial###
                               tabPanel("Tutorial",icon = icon("chart-line"), value = 'Tutorial',
                                        introductionUI()),
 
-                              #Table 2 panels###
+                        #Table 2 panels###
                              tabPanel("Data Analysis", icon = icon("table"), value = 'tableDescr',
                                       tags$br(),
                                        tabsetPanel(type = "pills", id = 'Table2panels',
@@ -104,7 +106,7 @@ ui <- fluidPage(theme = shinytheme("united"),
                                                             value = "batchPlot",
                                                             batchPlotUI() ) #Defined in the tableDescr.R
                                        )  ),
-                              #Heatmap & PCA###
+                        #Heatmap & PCA###
                              tabPanel("Heatmap & PCA", icon = icon("signal"), value = "Heatmap_PCA",
                                       tags$br(),
                               tabsetPanel(type = "pills", id = 'Heatmap_PCA', selected = "FixedHeatmap",
@@ -113,7 +115,7 @@ ui <- fluidPage(theme = shinytheme("united"),
                                           tabPanel(title= "Interactive visualisations",  value = "iHeatmap",                                                                    heatmapPcaUI(),tags$br(),PCA_UI()
                                                    ) #Defined in the heatmapPca.R
                                       )),
-                              #Correlation###
+                          #Correlation###
                                       tabPanel("Correlation", icon = icon("chart-line"), value = 'correlation',
                                                tags$br(),
                                         tabsetPanel(type = "pills",id = 'corrTabs',
@@ -124,7 +126,7 @@ ui <- fluidPage(theme = shinytheme("united"),
                                                           )
                                                ),
 
-                              #ROC###
+                            #ROC###
                                       tabPanel("ROC curves", icon = icon("chart-line"), value = 'rocCurves',
                                                   ROCCurvesUI() #Defined in the ROCCurves.R
                                                )  )
@@ -134,75 +136,79 @@ ui <- fluidPage(theme = shinytheme("united"),
 #####
 
 ######
-# Define server
+# =======Define server
 server <- function(input, output, session) {
-  options(shiny.maxRequestSize=5*1024^2) #Limite de taille de fichier possible que l'utilisateur peut envoyer (ici 30 MB)
-  ## Call Server Functions ####
 
-# General
+# ======Call Server Functions ####
+# General:
   reacUsedTable <- usedTable(input,session)
   reacUsedGroups <- usedGroups(input,reacUsedTable)
   reacCalcTable <- calcTable(input,reacUsedTable)
   reacColorFunction <- colorFunction(input,reacUsedTable)
   reacNameTable <- nameTable(input)
   observeGeneral(input,session,reacUsedTable)
-# About
+
+# About:
   Text1 <- about()
   observeUploadFileToChangeTabs(input,session)
   Textintro <- introduction()
 
-# Description Table : summary and p-value (Tab 1)
+# Description Table : summary and p-values (Tab 1)
   reacMytableDescr <- MytableDescr(input,reacUsedGroups,reacCalcTable)
   reacMytableStat <- MytableStat(input,reacUsedGroups,reacCalcTable)
   reacPlotDescr <- plotDescr(input,reacUsedGroups,reacCalcTable,reacColorFunction,reacMytableStat)
-# Batch Plots (Tab 2)
+
+# Batch Plots (Tab 2):
   reacBatchPlot <- batchPlot(input,reacUsedGroups,reacCalcTable,reacColorFunction)
   reacMoreBatchPlot <- MoreBatchPlot(input,reacUsedGroups,reacCalcTable,reacColorFunction)
 
-# Heatmap and PCA (Tab 3)
+# Heatmap and PCA (Tab 3):
   reacFixedHeatmap <- FixedHeatmap(input,reacUsedGroups,reacCalcTable,reacColorFunction)
   reacHeatmap <- heatMap(input,reacUsedGroups,reacCalcTable,reacColorFunction)
   reacACP <- ACP(input,reacUsedGroups,reacCalcTable,reacColorFunction)
   reacFixedPCA <- FixedPCA(input,reacUsedGroups,reacCalcTable,reacColorFunction)
 
-# Correlation Table (Tab 4)
+# Correlation Table (Tab 4):
   reacCorrelogram <- correlogram(input,reacCalcTable)
   reacCorrTable <- corrTable(input,reacCalcTable)
   reacPvalCorrTable <- pvalCorrTable(input,reacCalcTable)
   reacCorrGraph <- corrGraph(input,reacCalcTable)
 
-# ROC Curve (Tab 5)
-  reacROCPlot <- ROCPlot(input,reacUsedTable,reacColorFunction)
-  reacAUCTable <- AUCTable(input,reacUsedTable)
+# ROC Curve (Tab 5):
+  reacROCPlot <- ROCPlot(input,reacUsedTable,reacColorFunction, reacCalcTable)
+  reacAUCTable <- AUCTable(input,reacUsedTable, reacCalcTable)
 
-  ## Output ####
-# General
+# ====== Output ####
+# General:
   generalOutput(input,output,reacUsedTable,reacNameTable)
-# About
+
+# About:
   aboutOutput(output,Text1)
   introductionOutput(output, Textintro)
-# Page 1
+
+# Page 1 (summary and p-values):
   tableDescrOutput(output,reacMytableStat,reacMytableDescr,reacPlotDescr,reacNameTable)
   batchPlotOutput(output,reacBatchPlot)
-  # Page 3
+
+# Page 3 (Heatmap and PCA):
   heatmapOutput(output,reacHeatmap,reacACP,reacFixedHeatmap,reacFixedPCA)
-# Page 4
+
+# Page 4 (Correlation):
   correlogramOutput(output,reacCorrTable,reacPvalCorrTable,reacCorrelogram,reacNameTable)
   corrGraphOutput(output,reacCalcTable,reacCorrGraph,reacNameTable,reacCorrTable)
-# Page 5
-  ROCCurvesOutput(output,reacCalcTable,reacROCPlot,reacAUCTable,reacUsedGroups,reacNameTable)
 
-## Download Graphs ####
+# Page 5 (ROC Curve):
+  ROCCurvesOutput(output,reacCalcTable,reacROCPlot,reacAUCTable,reacUsedGroups,
+                  reacNameTable)
+
+# =========== Download Graphs ####
   extableDownload(output,session)
   FixedheatmapDownload(input,output,reacFixedHeatmap)
   FixedPCADownload(input,output,reacFixedPCA)
   batchPlotDownload(input,output, reacUsedTable, reacBatchPlot, reacMoreBatchPlot)
-  corrDownload(input,output,reacCorrelogram)
   ROCDownload(input,output,reacROCPlot)
-
   }
+
 ###
 # Run the application
 shinyApp(ui = ui, server = server)
-
-####End
