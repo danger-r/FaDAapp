@@ -39,6 +39,7 @@ readTableUI <- function(){
   )
 }
 
+        ## general options in the sidebar:
 generalDataOptionUI <- function(){
   tagList(
 # options to log transform data:
@@ -49,6 +50,7 @@ generalDataOptionUI <- function(){
                 title= "Logarithmic transformations", "Log2 & Log10 will set all the negative values to 0",
                   placement = "bottom", trigger = "hover", options = NULL),
 
+# options to choose parametric or nonparametric tests/descriptive table:
         radioButtons(inputId = "Test", "Test:",
                      choices = c(Parametric = "parametric", Nonparametric = "nonparametric"),
                      selected = "parametric",
@@ -56,15 +58,16 @@ generalDataOptionUI <- function(){
         bsPopover("Test", title= "Shapiro-Wilk normality test", "If p-value is <0.05, data are not normally distributed, and, with less than 30 samples, the use of non-parametric tests is recommended.",
                   placement = "bottom", trigger = "hover", options = NULL),
 
+# options to choose colors:
     selectInput(inputId = "SelectColor",
                 "Change group colors:", c(rownames(brewer.pal.info[which(brewer.pal.info$category == "qual"),]) ), selected = "Set1" )
   )
 }
 
-#generalParametricOptionUI <- function(){}
-
+        ## options for statistics:
 TestParametricOptionUI <- function(){
   tagList(
+    
 # make choice of multiple tests corrections:
       radioButtons("correction", "Multiple tests correction:",
                    choices = c(BH = "BH",
@@ -122,6 +125,7 @@ generalTableHead <- function(){
 
 }
 
+        ## optionsTutorial UI:
 TutorialOptionUI <- function(){
   text = tags$span(
   br("If you like FaDA, please cite:", tags$b("Reference coming soon !", style = "color: black;")),
@@ -131,6 +135,7 @@ TutorialOptionUI <- function(){
   )
 }
 
+        ## options for correlogramm (colors):
 corrPlotOptionUI <- function(){
   tagList(
     tags$h3("correlogram option:"),
@@ -140,6 +145,7 @@ corrPlotOptionUI <- function(){
   )
 }
 
+        ## options for heatmap (colors + clustering):
 HeatmapOptionUI <- function(){
   tagList(
     tags$h3("Heatmap option:"),
@@ -153,8 +159,12 @@ HeatmapOptionUI <- function(){
 }
 
 
-## Server ####
+
+
+## Server part ####
 observeGeneral <- function(input,session,reacUsedTable){
+  
+          ## display instructions to prepare table:
   observeEvent(input$sw_html,{
       sendSweetAlert( session = session, title = NULL,
         text = tags$span(
@@ -177,6 +187,7 @@ observeGeneral <- function(input,session,reacUsedTable){
               html = TRUE,type = 'info')
       })
 
+            ## display an alert if negative values for log transformations -> values set to NA:
   observeEvent(input$Transform,{
     if(input$Transform == "Log2"){
       df <- reacUsedTable()
@@ -206,6 +217,7 @@ observeGeneral <- function(input,session,reacUsedTable){
 }
 
 
+          ## function for reactive table:
 usedTable <- function(input, session){
   used_table <- reactive({
       return(funUsedTable(session,input$file1,input$TestTable))
@@ -213,6 +225,7 @@ usedTable <- function(input, session){
   return(used_table)
 }
 
+          ## function for reactive groups:
 usedGroups <- function(input,used_table){
   used_groups <- reactive({
     funUsedGroups(used_table())
@@ -220,6 +233,7 @@ usedGroups <- function(input,used_table){
   return(used_groups)
 }
 
+          ## function for reactive transformed table:
 calcTable <- function(input,used_table){
   calc_table  <- reactive({
     funCalcTable(used_table(),input$Transform)
@@ -227,9 +241,9 @@ calcTable <- function(input,used_table){
   return(calc_table)
 }
 
+          ## function for colors input:
 colorFunction <- function(input,used_table){
   colorFunction <- reactive({
-    #rownames(brewer.pal.info)
     gcol <- funColorFunction(used_table(),input$SelectColor)
   })
   return(colorFunction)
@@ -249,6 +263,7 @@ nameTable <- function(input){
   })
   return(NameTable)
 }
+
 
 ## Independant Functions ####
 
@@ -285,6 +300,7 @@ funUsedGroups <- function(usedTable){
   return(usedTable[,1])
 }
 
+          ## log transformations:
 funCalcTable <- function(usedTable,infoTransform){
     validate( need( !is.null(usedTable), "Please, upload a properly formatted dataset or use the example." ) ) ####Please, upload a properly formatted dataset or use the example.#
     calcTable <- usedTable[,-1]
@@ -298,6 +314,7 @@ funCalcTable <- function(usedTable,infoTransform){
     return(as.data.frame(calcTable))
 }
 
+      ## function to adjust n of colors to n of groups:
 funColorFunction <- function(usedTable,infoSelectColor){
   validate( need( !is.null(usedTable), " " ) )
   group <- usedTable[,1]
@@ -311,7 +328,6 @@ funColorFunction <- function(usedTable,infoSelectColor){
 generalOutput <- function(input,output,reacUsedTable,reacNameTable){
   output$filename <- renderText({reacNameTable()})
   output$filename2 <- renderText({reacNameTable()})
-
   output$head <- renderDT(head(reacUsedTable()[,c(1:7)]))
 }
 
@@ -323,4 +339,4 @@ extableDownload <- function(output,session){
                                       file.copy("TestTable.txt", file)
                                     })
 }
-##
+## end
