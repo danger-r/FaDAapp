@@ -1,4 +1,4 @@
-# FaDA Shiny application - FaDA: A Shiny web application to accelerate common lab data analyses
+# FaDA Shiny application - FaDA: A web application for basic wet-laboratory data analyses
 
 FaDA application provides a free and intuitive interface allowing biologists without bioinformatic skills to easily and quickly perform common lab data analyses.
 The application is freely accessible at https://shiny-bird.univ-nantes.fr/app/Fada
@@ -24,12 +24,12 @@ The sidebar panel is always visible and the content of the sidebar panel depends
 
 #### Code Structure
 The app.R is the main R code file, all the other R file are called here.
-There is two main functions defined: ui and server
+There is two main functions defined: ui and server:
 - The ui (handle user input, server output and the display of the ui) and the server (process the ui input to calculate output) communicate via keywords associated to each input and output function declared in the ui function.
-The ui part of shiny is divided inside the app :
-·	app.R : It contains the main ui function that call all the other ui functions and set up the structure of the ui (sidebar panel/main panel)
-·	app/general/general.R : It’s the general sidebar ui panel which is general for all the tabs
-·	app/tabs/*.R : Each tabs have at least one ui function
+- The ui part of shiny is divided inside the app:
+·	app.R: tt contains the main ui function that call the other ui functions and set up the structure of the ui (sidebar panel/main panel),
+·	app/general/general.R: it contains the general sidebar ui panel which is general for all the tabs,
+·	app/tabs/*.R: Each tabs have at least one ui function
 
 - The Server Function :
 The server part of Shiny is also divided inside the app, like the division of the ui part:
@@ -42,7 +42,6 @@ A tab source code is only a group of functions called in app.R :
 	Download : functions that handle the download part
 
 app.R :
- 
 UI fonctions from tabs source file are called here (sidebar and mainpanel).
 Some are displayed with a condition (conditionalPanel)
 
@@ -63,4 +62,3 @@ Fast explanation of some reac functions :
 ## How to modify the app :
 Independent function or UI function in a specific tab can be modified in the  corresponding R file (to modify the sidebar, to create a sidebar function and/or to put it into the ui in app.R).
 To add a function that needs input, a function as to be created in the corresponding tab, which returned a reactive value. Then, the reactive value has to be called in the app.R ui and in app.R output part (server). 
-
