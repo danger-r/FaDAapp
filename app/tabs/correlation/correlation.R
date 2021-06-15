@@ -4,22 +4,20 @@ correlogramUI <- function(){
   tagList(
     tags$h3("Correlogram:",style = "color: steelblue;"),
     plotOutput(outputId ="Correlogram"),   # or plotlyOutput for interactive
-    # to choose circle or square in correlogram
-    radioButtons(inputId = "CorrFormat", "Change correlogram shape:",
+    radioButtons(inputId = "CorrFormat", "Change correlogram shape:",                         # to choose circle or square in correlogram
                  choices = c(circle = "circle", ellipse = "ellipse", number = "number",
                              classic = "color"),
                  selected = "circle", inline = TRUE),
-    # to choose correlogram orientation
-    radioButtons(inputId = "CorrLayout", "Change correlogram layout:",
+    radioButtons(inputId = "CorrLayout", "Change correlogram layout:",                          # to choose correlogram orientation
                  choices = c(lower = "lower", upper = "upper", full = "full"),
                  selected = "lower", inline = TRUE),
  tags$hr(), # Horizontal line --
     tags$h3("Correlation (r) table:",style = "color: steelblue;"),
-    DTOutput(outputId ="Corr_table") %>% withSpinner(color="#0dc5c1"),
+    DTOutput(outputId ="Corr_table") %>% withSpinner(color="#0dc5c1"),                    #table of correlation values ("Corr_table")
     tags$br(),
     tags$h3("p-values table:",style = "color: steelblue;"),
-    DTOutput(outputId ="pvalCorr_table") %>% withSpinner(color="#0dc5c1"),
-    plotlyOutput(outputId ="Scater_Plot_Cor")
+    DTOutput(outputId ="pvalCorr_table") %>% withSpinner(color="#0dc5c1"),                 #p-value table ("pvalCorr_table")
+    plotlyOutput(outputId ="Scater_Plot_Cor")                                              #interactive plot of individual correlation
   )
 }
 
@@ -32,13 +30,13 @@ corrGraphUI <- function(){ #The  UI for the correlogram graph
   )
 }
 
-#to higlight correlation :
+#to higlight correlation in the crooelation table :
 corrSidebarUI <- function(){
   tagList(
     sliderInput("corrSelect","Highlight correlations above the selected threshold: ",0,1,0.75)
     )}
 
-#to higlight p-values:
+#to higlight p-values in the p-value table:
 pValCorrSidebarUI <- function(){
   tagList(
     sliderInput("pValCorrSelect","Highlight in the table p-values above the selected threshold: ",0.0001, 1.000, 0.05)
@@ -66,6 +64,7 @@ corrTable <- function(input,reacCalcTable){
   return(Correlationtable)
 }
 
+### p-value Correlation table:
 pvalCorrTable <- function(input,reacCalcTable){
   pval_Correlation_table <- reactive({
     validate( need( !is.null(reacCalcTable()), " " ) )
@@ -106,14 +105,14 @@ funCorrelogram <- function(calcTable,infoTest, infoCorrColor1,infoCorrMiddleColo
 
   col <- colorRampPalette(c(infoCorrColor1, infoCorrMiddleColor, infoCorrColor2))(20)
 
-   # change format:
+   # change format of correlogramn (input is infoCorrFormat for shape; infoCorrLayout for correlogram orientation):
   CorrMethod <- switch(infoCorrFormat,
                   circle = "circle", ellipse = "ellipse", number = "number",
                   color = "color")
   CorrLayout <- switch(infoCorrLayout,
                        lower = "lower", upper = "upper", full = "full")
 
-  corrplot(mcor, type= CorrLayout, order="hclust", tl.col="black", method= CorrMethod,
+  corrplot(mcor, type= CorrLayout, order="hclust", tl.col="black", method= CorrMethod,        #corrplot function
            tl.srt=45, diag=F, col = col)
   return(mcor)
 
@@ -125,7 +124,7 @@ funCorrelogram <- function(calcTable,infoTest, infoCorrColor1,infoCorrMiddleColo
 }
 
 funCorrTable <- function(calcTable,infoTest,infoCorrSelect){
-  #If NA, Replace NA by KNN, need  transposition
+                                        #If NA, Replace NA by KNN, need  transposition
   if ( length( which(is.na(calcTable) == TRUE)) >= 1 )
   { calcTable <- t(calcTable)
   dfkNN <- impute.knn(calcTable, k = 10, rowmax = 0.5, colmax =0.8, rng.seed=362436069)
@@ -133,19 +132,18 @@ funCorrTable <- function(calcTable,infoTest,infoCorrSelect){
   calcTable <-as.matrix(dfkNN)
   }
 
-  if (infoTest == "parametric") {
+  if (infoTest == "parametric") {                                           #parametric-> pearson
     mcor <-cor(calcTable, method = "pearson", use = "complete.obs")   }
-  else { #unparametric
+  else {                                                                    #unparametric-> spearman
     mcor <-cor(calcTable, method = "spearman", use = "complete.obs")  }
   mcor <- format(mcor, digits = 3)
-  #print(mcor, bordered = TRUE)
   return(list("table"=mcor, "corrSelect"=infoCorrSelect))
 }
 
 funPvalCorrTable <- function(calcTable,infoTest, infopValCorrSelect){
-  if (infoTest == "parametric") {
+  if (infoTest == "parametric") {                                           #parametric-> pearson
     mcor_test <- cor.mtest(calcTable, method = "pearson", na.action = "na.exclude" )$p   }
-  else { #unparametric
+  else {                                                                    #unparametric-> spearman
     mcor_test <-cor.mtest(calcTable, method = "spearman", na.action = "na.exclude")$p  }
 
   colnames(mcor_test)<-colnames(calcTable)
@@ -167,8 +165,6 @@ funCorrGraph <- function(calcTable,infoCellSelected){
     xlab(colnames(calcTable)[indx]) +
     ylab(colnames(calcTable)[indy])
 
-  #print(plot)
-
   gplot <- ggplotly(plot) %>% layout( dragmode = "select") %>%  partial_bundle()
   return(gplot)
 }
@@ -188,6 +184,7 @@ correlogramOutput <- function(output,reacCorrTable,reacPvalCorrTable,reacCorrelo
                                                                                      filename = paste(reacNameTable(),"_CorrTable",sep="")),
                                                                                 list(title = paste(reacNameTable(),"_CorrTable",sep=""), extend='pdf',
                                                                                      filename= paste(reacNameTable(),"_CorrTable",sep="")) )
+  ## formatStyle to higlight correlation according threshold (corrSelect):                                                           
                                                 ) )  %>%  formatStyle(colnames(reacCorrTable()$table),
                                                                       fontWeight = styleInterval(  c(-reacCorrTable()$corrSelect, reacCorrTable()$corrSelect), c('bold','normal','bold')),
                                                                       backgroundColor = styleInterval(  c(-reacCorrTable()$corrSelect, reacCorrTable()$corrSelect), c('lightyellow', 'white','lightyellow'))
@@ -204,22 +201,12 @@ correlogramOutput <- function(output,reacCorrTable,reacPvalCorrTable,reacCorrelo
                                                                                          filename = paste(reacNameTable(),"_PvalCorrTable",sep="")),
                                                                                     list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='pdf',
                                                                                          filename= paste(reacNameTable(),"_PvalCorrTable",sep=""))))) %>%
+                                     
+                  ## formatStyle to higlight p-values  according threshold (pValCorrSelect):                                                           
                                                                 formatStyle(
                                                                   colnames(reacPvalCorrTable()$table),
                                                                   fontWeight = styleInterval( c(reacPvalCorrTable()$pValCorrSelect), c('bold','normal')),
                                                                   backgroundColor = styleInterval( c(reacPvalCorrTable()$pValCorrSelect), c('lightyellow', 'white')) )
-
-
-
-
-
-
-
-
-
-
-
-
 
   })
 
@@ -244,5 +231,4 @@ corrGraphOutput <- function(output,reacCalcTable,reacCorrGraph,reacNameTable,rea
   output$corrGraph <- renderPlotly({  reacCorrGraph()  })
 }
 
-## Download ####
-
+##End
