@@ -54,6 +54,9 @@ Fast explanation of some reactive functions ('reac...') :
 	- _reacMyTableStat_ return the p-value between groups
 	- _reacPlotDescr_ return a plot (whisker, points, bar, ... ) of the tableDescr content of one parameter (gene)
 	- _reacBatchPlot_ return all the plotDescr of all parameters
+	
+###### Upload data
+A simple demonstration dataset is provided, including virtual data from 2 groups with 5 samples each, to explore the features of the web application. Alongside, user can upload and analyse its own dataset, appropriately formatted. Data are uploaded in a text format (tabular-delimited ‘.txt’ or ‘.csv’ file), with a point or a coma as a decimal separator. To allow for flexible use of the application with minimal preparation time, sample identification is in columns or rows. FaDA input only requires unique names for sample identification, and the second row or column is named “Group” to identify sample group labels.
   
 ## How to modify the app :
 Independent function or UI function in a specific tab can be modified in the corresponding R file (to modify the sidebar, to create a sidebar function and/or to put it into the ui in app.R).
