@@ -2,14 +2,14 @@
 tableDescrMainUI <- function(){
   tagList(
     tags$h3("Descriptive table:",style = "color: steelblue;"),
-    DTOutput(outputId = "Input_tableDescr")  %>% withSpinner(color="#0dc5c1"),
+    DTOutput(outputId = "Input_tableDescr")  %>% withSpinner(color="#0dc5c1"),      # descrtiptive table
     tags$br(),
     tags$h3("Comparison table:",style = "color: steelblue;"),
-    DTOutput(outputId ="Input_tableStat")  %>% withSpinner(color="#0dc5c1"),
+    DTOutput(outputId ="Input_tableStat")  %>% withSpinner(color="#0dc5c1"),        # statistical table
     tags$h3("Select a column in the comparison table to display individual graph",style = "color: #b73338;"),
-    plotlyOutput(outputId ="PlotDescr"),
-    textInput("PlotTitle","Choose a title"),
-    textInput("PlotYAxis","Choose a Y Axis label")
+    plotlyOutput(outputId ="PlotDescr"),                                            # individual & interactive plot
+    textInput("PlotTitle","Choose a title"),                                        # possibility to add a title
+    textInput("PlotYAxis","Choose a Y Axis label")                                  # possibility to add Y axis name
   )
 } #Display on the main panel
 
@@ -54,7 +54,7 @@ plotDescr <- function(input,used_groups,calc_table,colorFunction,mytableStat){
     selected <- input$Input_tableStat_columns_selected
     validate( need( !is.null(selected), "" ) )
     dim(selected) <- length(selected)
-    data <- apply(selected,1,function(x){ #We create the dataset to iterate with in the funPlotDescr function
+    data <- apply(selected,1,function(x){               #We create the dataset to iterate with in the funPlotDescr function
       return(list("value"=df2[,x],"gene"=colnames(df2)[x],"pvalue"=mytableStat()$table[2,x]))
     })
 
@@ -84,7 +84,7 @@ funMytableDescr <- function(used_Groups,calc_Table,infoTest){
     }
   }
 
-  else {                                                        #unparametric -> median, IQR
+  else {                                                                        # unparametric -> median, IQR
     ValDesc <- matrix(nrow= ngroup*2, ncol= length(colnames(calc_Table) ),
                       dimnames = list(c(paste("median-", levels(as.factor(used_Groups))), paste("IQR-", levels(as.factor(used_Groups)))) ,
                                       colnames(calc_Table) ) )
@@ -100,11 +100,11 @@ funMytableDescr <- function(used_Groups,calc_Table,infoTest){
   return(ValDesc2)
 }
 
- #stat table:
+ ## stat table:
 funMytableStat <- function(used_Groups,calc_Table,infoDesign,
                            infoTest, infoCorrection,infoEqualvariance, infopValSelect, infoseldigits){
 
-  Val <- matrix(nrow= 1, ncol= length(colnames(calc_Table) ), dimnames = list(list("p.value"), colnames(calc_Table) ) )
+  Val <- matrix(nrow= 1, ncol= length(colnames(calc_Table) ), dimnames = list(list("p.value"), colnames(calc_Table) ) )      ## create a matrix according n of paramters in the 'calc_Table'
 
  ###for 2 groups:
   if (length(levels(as.factor(used_Groups))) == 2) {
@@ -117,7 +117,7 @@ funMytableStat <- function(used_Groups,calc_Table,infoDesign,
       Val[1,] <- apply( calc_Table, 2, function (x)
         t.test( x ~ used_Groups, data = calc_Table, paired = P, var.equal = VarEq, na.omit = FALSE)$p.value )
     }
-    else{         #nonparametric -> wilcox/MannWhitney test
+    else{                     # nonparametric -> wilcox/MannWhitney test
       Val[1,] <- apply( calc_Table, 2, function (x)
         wilcox.test( x ~ used_Groups, data = calc_Table, paired = P)$p.value ) }
 
@@ -167,14 +167,14 @@ funMytableStat <- function(used_Groups,calc_Table,infoDesign,
       }
     }
 
-    p.adj <- apply( Val, 1, function (x)                            #multiple testing correction
+    p.adj <- apply( Val, 1, function (x)                            #multiple testing correction (according 'infoCorrection' selected by user)
       p.adjust( x, method = infoCorrection, n = length(Val) ) )
     colnames(p.adj) = paste("p.adjusted ",infoCorrection,sep = "")
 
-    Val2 <- format(rbind(Val, t(p.adj), ValTukey), digits = infoseldigits)
+    Val2 <- format(rbind(Val, t(p.adj), ValTukey), digits = infoseldigits)      
   }
 
-  Val2 <- format(Val2, digits = infoseldigits, scientific =FALSE)
+  Val2 <- format(Val2, digits = infoseldigits, scientific =FALSE)               #format matrix Val in Val2 with no scientific numbers
   #print(Val2, bordered = TRUE )
   return(list("table"=Val2, "pValSelect"=infopValSelect))
 }
