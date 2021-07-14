@@ -57,8 +57,8 @@ ui <- fluidPage(theme = shinytheme("united"),
                   )
                 ),
 
-                headerPanel(
-                  div(img(src= "IconOct19.png", class = "pull-left"),
+                headerPanel(                              ### add of FaDA and CRTI logos 
+                  div(img(src= "IconOct19.png", class = "pull-left"),       
                       div(img(src= "logo.png", class = "pull-right")) )   ),
 
                 
@@ -190,15 +190,15 @@ server <- function(input, output, session) {
   introductionOutput(output, Textintro)
 
 # Page 1 (summary and p-values):
-  tableDescrOutput(output,reacMytableStat,reacMytableDescr,reacPlotDescr,reacNameTable)
-  batchPlotOutput(output,reacBatchPlot)
+  tableDescrOutput(output,reacMytableStat,reacMytableDescr,reacPlotDescr,reacNameTable)    #Description table + stat table + individual plots
+  batchPlotOutput(output,reacBatchPlot)                                                    #"batch" plots with all parameters in a single sub-tabset
 
 # Page 3 (Heatmap and PCA):
   heatmapOutput(output,reacHeatmap,reacACP,reacFixedHeatmap,reacFixedPCA)
 
 # Page 4 (Correlation):
-  correlogramOutput(output,reacCorrTable,reacPvalCorrTable,reacCorrelogram,reacNameTable)
-  corrGraphOutput(output,reacCalcTable,reacCorrGraph,reacNameTable,reacCorrTable)
+  correlogramOutput(output,reacCorrTable,reacPvalCorrTable,reacCorrelogram,reacNameTable)   #main correlation page with tables and correlogram
+  corrGraphOutput(output,reacCalcTable,reacCorrGraph,reacNameTable,reacCorrTable)           #sub-tabset with individual pairs of variables
 
 # Page 5 (ROC Curve):
   ROCCurvesOutput(output,reacCalcTable,reacROCPlot,reacAUCTable,reacUsedGroups,
