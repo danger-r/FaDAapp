@@ -4,7 +4,7 @@
 #-1 -> Error, the table is not correctly formated
 #
 #
-
+######## To detect orientation of the data ("group" information in column or row):
 isTransposedInput <- function(dataframe){
   if(tolower(colnames(dataframe)[1]) == "group"){
     return(0)  ##
@@ -26,8 +26,8 @@ isTransposedInput <- function(dataframe){
 #the dataframe formated (transposed or not) or null if error != 0
 validingInput <- function(infoFileDatapath,decSeparator = "."){
   if (  grepl(".txt", infoFileDatapath)  == T ) { separator= "\t"} else {separator=";"}
-  df <- read.csv(infoFileDatapath, sep =  separator, dec = decSeparator)
-  df <- fread(infoFileDatapath, sep =  separator, dec = decSeparator)
+  #df <- read.csv(infoFileDatapath, sep =  separator, dec = decSeparator) #old function
+  df <- fread(infoFileDatapath, sep =  separator, dec = decSeparator)     #use of fread to accelerate data read
   df <- as.data.frame(df)
 
   if(anyDuplicated(df[,1])){
