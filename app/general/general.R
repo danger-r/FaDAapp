@@ -39,7 +39,7 @@ readTableUI <- function(){
   )
 }
 
-        ## general options in the sidebar:
+              ## general options in the sidebar:
 generalDataOptionUI <- function(){
   tagList(
 # options to log transform data:
@@ -160,8 +160,9 @@ HeatmapOptionUI <- function(){
 
 
 
-
+-----------------------------------------------------------------------------
 ## Server part ####
+
 observeGeneral <- function(input,session,reacUsedTable){
   
           ## display instructions to prepare table:
@@ -341,4 +342,5 @@ extableDownload <- function(output,session){
                                       file.copy("TestTable.txt", file)
                                     })
 }
-## end
+                         
+################## end
