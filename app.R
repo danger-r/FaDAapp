@@ -5,7 +5,8 @@ library(shinycssloaders)  #For the spinner of load during the computing of the f
 library(shinyBS)          #For tooltips, popovers and alerts
 library(shinyWidgets)     #For some shiny functions
 library(ggplot2)          #Plot graphs
-library(plotly)           #Plot interactives graphs
+#library(plotly)           #Plot interactives graphs
+import::from(plotly, plotlyOutput, renderPlotly, ggplotly) ## import only require function instead of the whole package
 library(gridExtra)        #Grid display
 library(grid)             #Grid display
 library(gplots)           #For colorpanels in the heatmap
@@ -21,15 +22,16 @@ if (!requireNamespace("BiocManager", quietly = TRUE)){
   if(!require("impute"))
     BiocManager::install("impute")
 }
-library(impute)           #For knn on the heatmap when there is NA values
+#library(impute)           #For knn on the heatmap when there is NA values
+import::from(impute, impute.knn)
 library(FSA)              #For some tests (DunnTest)
 library(RColorBrewer)     #For the color palette
 library(pROC)             #For ROC Curves
-if (!require("devtools"))
-  install.packages("devtools")
-if (!require("svglite"))
-  devtools::install_github("r-lib/svglite")
-library(svglite)          #For svg images
+#if (!require("devtools"))
+#  install.packages("devtools")
+#if (!require("svglite"))
+#  devtools::install_github("r-lib/svglite")
+#library(svglite)          #For svg images  #removed to speed up loading
 
 
 # ====== files Sources (which are in corresponding tab) ####
