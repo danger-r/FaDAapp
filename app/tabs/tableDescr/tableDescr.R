@@ -1,4 +1,7 @@
 ## UI ####
+#library(FSA)              #For some tests (dunnTest)
+import::from(FSA, dunnTest)
+
 tableDescrMainUI <- function(){
   tagList(
     tags$h3("Descriptive table:",style = "color: steelblue;"),
@@ -319,4 +322,4 @@ tableDescrOutput <- function(output,reacMytableStat,reacMytableDescr,reacPlotDes
   })
 
 }
-##End
+######## End
