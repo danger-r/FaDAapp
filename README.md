@@ -1,6 +1,7 @@
 # FaDA Shiny application - FaDA: A web application for regular laboratory data analyses
 
-The FaDA application provides a free and intuitive interface that allows biologists without bioinformatics skills to easily and quickly perform common laboratory data analyses. The application is freely accessible at https://shiny-bird.univ-nantes.fr/app/Fada
+The FaDA application provides a free and intuitive interface that allows biologists without bioinformatics skills to easily and quickly perform common laboratory data analyses.
+The application is freely accessible at https://shiny-bird.univ-nantes.fr/app/Fada
 
 
 ##  FaDA’s Development Documentation
