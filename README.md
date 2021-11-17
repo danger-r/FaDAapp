@@ -1,5 +1,5 @@
 # FaDA Shiny application - FaDA: A web application for regular laboratory data analyses
-<img src="https://github.com/shinyorg/shiny/raw/master/art/IconOct19.png" width="100" /> 
+<img src="https://github.com/danger-r/FaDAapp/blob/master/www/IconOct19.png" width="100" /> 
 
 
 The FaDA application provides a free and intuitive interface that allows biologists without bioinformatics skills to easily and quickly perform common laboratory data analyses.
