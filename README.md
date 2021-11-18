@@ -45,16 +45,16 @@ A tab source code is a group of functions called in app.R:
 
 - 'app.R' file:
 UI fonctions from tab source files are called here (sidebar and main panel). Some are displayed with a condition (conditionalPanel).
-Server functions are called here (not independents functions). There is no order priority, it connects the servers functions in tabs R file with the R Shiny app.
+Server functions are called here (not independents functions). There is no order priority, it connects the servers functions in tabs with the R Shiny app.
 Explanations of some reactive functions ('reac...') :
 	- _reacUsedTable_ is the input table (formated) provided by the user,
-	- _reacUsedGroups_ is the group name vector taken from usedTable,
-	- _reacCalcTable_ is the usedTable recalculated in log or not (if log option is selected) without the group column,
-	- _observeGeneral_ and _observeUpload_ is observers that add an alert action in Shiny according conditions,
+	- _reacUsedGroups_ is the group name vector from usedTable,
+	- _reacCalcTable_ is the usedTable recalculated in log, if log option is selected, without the group column,
+	- _observeGeneral_ and _observeUpload_ are observers that add an alert action in Shiny according conditions,
 	- _about_ returns the content of the about tab,
 	- _reacMytableDescr_ returns descriptive statistics (mean, sd, median, ... according selected options),
 	- _reacMyTableStat_ returns p-values between groups (according selected options),
-	- _reacPlotDescr_ returns a plot (whisker, points, bar, ... ) of the selected parameter from the statistical table,
+	- _reacPlotDescr_ returns a plot (whisker, points, bar, ... ) of the selected parameter(s) from the statistical table,
 	- _reacBatchPlot_ returns the plotDescr of all parameters, in a batch.
 
 
