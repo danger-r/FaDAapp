@@ -1,37 +1,39 @@
+##FaDA Version 17-nov-2021
+
 # ====== import R libraries: ####
 library(shiny)            #For shiny
 library(shinythemes)      #For graphics of shiny interface
-library(shinycssloaders)  #For the spinner of load during the computing of the functions
+import::from(shinycssloaders, withSpinner) #For the spinner of load during the computing of the functions
 library(shinyBS)          #For tooltips, popovers and alerts
 library(shinyWidgets)     #For some shiny functions
-library(ggplot2)          #Plot graphs
-#library(plotly)           #Plot interactives graphs
+
 import::from(plotly, plotlyOutput, renderPlotly, ggplotly) ## import only require function instead of the whole package
-library(gridExtra)        #Grid display
-library(grid)             #Grid display
-library(gplots)           #For colorpanels in the heatmap
-library(ComplexHeatmap)   #For  heatmaps
-library(circlize)         #For  heatmaps
-library(heatmaply)        #For interactive heatmaps
-library(corrplot)         #For correlogram
-#library(ggcorrplot)       #For interactive correlogram
-library(data.table)       #For the import table (fread)
-library(DT)               #For datatabkes functions
-if (!requireNamespace("BiocManager", quietly = TRUE)){
-  install.packages("BiocManager")
-  if(!require("impute"))
-    BiocManager::install("impute")
-}
-#library(impute)           #For knn on the heatmap when there is NA values
-import::from(impute, impute.knn)
-library(FSA)              #For some tests (DunnTest)
-library(RColorBrewer)     #For the color palette
-library(pROC)             #For ROC Curves
+library(gridExtra, verbose=FALSE)        #Grid display
+library(RColorBrewer, verbose=FALSE)    #For the color palette
+
+##moved in other tabs to improve loading speed:
+#library(ggplot2)          #Plot graphs
+#library(plotly)           #Plot interactives graphs
+#library(grid)             #Grid display
+#library(gplots)           #For colorpanels in the heatmap
+#library(ComplexHeatmap)   #For  heatmaps
+#library(circlize)         #For  heatmaps
+#library(heatmaply)        #For interactive heatmaps
+#library(corrplot)         #For correlogram
+#library(data.table)       #For the import table (fread)
+#library(DT)               #For datatabkes functions
+#import::from(impute, impute.knn)
+#library(FSA)              #For some tests (DunnTest)
+#library(pROC)             #For ROC Curves
+
+##removed:
+#library(svglite)          #For svg images  #removed to speed up loading
 #if (!require("devtools"))
 #  install.packages("devtools")
 #if (!require("svglite"))
 #  devtools::install_github("r-lib/svglite")
-#library(svglite)          #For svg images  #removed to speed up loading
+#library(impute)           #For knn on the heatmap when there is NA values
+#library(ggcorrplot)       #For interactive correlogram
 
 
 # ====== files Sources (which are in corresponding tab) ####
@@ -203,8 +205,7 @@ server <- function(input, output, session) {
   corrGraphOutput(output,reacCalcTable,reacCorrGraph,reacNameTable,reacCorrTable)           #sub-tabset with individual pairs of variables
 
 # Page 5 (ROC Curve):
-  ROCCurvesOutput(output,reacCalcTable,reacROCPlot,reacAUCTable,reacUsedGroups,
-                  reacNameTable)
+  ROCCurvesOutput(output,reacCalcTable,reacROCPlot,reacAUCTable,reacUsedGroups,reacNameTable)
 
 # =========== Download Graphs ####
   extableDownload(output,session)
