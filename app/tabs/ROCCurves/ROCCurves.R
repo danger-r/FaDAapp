@@ -11,6 +11,8 @@ ROCCurvesUI <- function(){
     plotOutput(outputId = "ROCPlot", width = "50%")  %>% withSpinner(color = "#0dc5c1"),
     downloadButton('dROCPlotTiff', label="Download as .Tiff"),
     downloadButton('dROCPlotSvg', label="Download as .SVG"),
+    downloadButton('dROCPlotPdf', label="Download as .Pdf"),
+
     tags$br(),
     tags$h3("ROC analysis:",style = "color: steelblue;"),
     DTOutput(outputId ="AUC_table")  %>% withSpinner(color="#0dc5c1"),      #table of ROC values
@@ -51,6 +53,9 @@ AUCTable <- function(input, reacUsedTable, reacCalcTable){
 funROCPlot <- function(used_Table, infoSelectColor,
                        infoGroup1, infoGroup2, infoParameter1, calcTable,
                        infoLineSize) {
+#Library for ROC Curves: 
+    import::from(pROC, roc, plot.roc, coords)
+
       # prepare a table with selected groups:
   df3 <- used_Table[c(which(used_Table[,1] == infoGroup1), which(used_Table[,1] == infoGroup2)),]
   group_df3 <- df3[,1]
@@ -80,7 +85,8 @@ funAUCTable <- function(used_Table,infoGroup1,infoGroup2, calcTable){       #pre
   df3 <- used_Table[c(which(used_Table[,1] == infoGroup1), which(used_Table[,1] == infoGroup2)),]
   group_df3 <- df3[,1]
   df4 <- df3[,-1]
-
+#Library for ROC Curves: 
+    import::from(pROC, roc, plot.roc, coords)
   Valroc <- matrix(nrow=6, ncol= length(colnames(df4) ), dimnames = list(list("AUC","Threshold","Specificity","Sensitivity","NPV","PPV"), colnames(df4) ) )
   Valroc[1,] <- apply(df4, 2, function(x) #Get the AUC
     roc( as.numeric(as.factor(group_df3)), as.numeric(x))$auc )
@@ -111,9 +117,8 @@ ROCCurvesOutput <- function(output, reacCalcTable, reacROCPlot,
                                                                               list(title = paste(reacNameTable(),"_AUCTable", sep=""), extend='csv',
                                                                                    filename = paste(reacNameTable(),"_AUCTable",sep="")),
                                                                               list(title = paste(reacNameTable(),"_AUCTable", sep=""), extend='excel',
-                                                                                   filename = paste(reacNameTable(),"_AUCTable", sep="")),
-                                                                              list(title = paste(reacNameTable(),"_AUCTable", sep=""), extend='pdf',
-                                                                                   filename= paste(reacNameTable(),"_AUCTable", sep="")) ))
+                                                                                   filename = paste(reacNameTable(),"_AUCTable", sep=""))
+                                                                            ))
   )
   })
 
@@ -153,6 +158,12 @@ ROCDownload <- function(input,output,reacROCPlot){
                                          reactive(paste(input$file1$name,"_ROCCurve.svg",sep = "")),
                                        content = function(file, compression = "lzw", res = 600) {
                                          svglite(file)
+                                         print( reacROCPlot() )
+                                         dev.off()                      })
+   output$dROCPlotPdf = downloadHandler(filename =
+                                         reactive(paste(input$file1$name,"_ROCCurve.pdf",sep = "")),
+                                        content = function(file, compression = "lzw", res = 600, height= 5) {
+                                         pdf(file)
                                          print( reacROCPlot() )
                                          dev.off()                      })
 }
