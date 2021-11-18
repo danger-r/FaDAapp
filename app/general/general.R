@@ -96,7 +96,12 @@ bsPopover("Equalvariance",
       radioButtons(inputId = "Graph",
                    "Graph options:",
                    choices = c(Whiskers = "whiskers", Point = "point",
-                               Bar = "bar", Violin = "violin"), selected = "whiskers")
+                               Bar = "bar", Violin = "violin"), selected = "whiskers"),
+
+# make choice to set ylim to 0:
+strong("Set Y axis origin to O:"),
+materialSwitch(inputId = "Setylim", status = "info")
+
 )  }
 
 generalTableHead <- function(){
@@ -152,9 +157,10 @@ HeatmapOptionUI <- function(){
     selectInput(inputId ="color1", "Color for low levels:", c("blue","yellow","green","red","grey","violet")),
     selectInput(inputId ="Middlecolor", "Middle level color:",   c("black","grey","white")),
     selectInput(inputId ="color2", "Color for high levels:",   c("red","yellow","blue","green","grey","violet")),
-    radioButtons(inputId ="Clustering", "Clustering option:",
-                 choices = c(supervised = "supervised", unsupervised = "unsupervised"),
-                 selected = "supervised")
+
+# make choice for unsupervised clustering:
+  strong("Unsupervised clustering:"),
+    materialSwitch(inputId = "Clustering", status = "info")
   )
 }
 
