@@ -10,7 +10,7 @@ about <- function(){
   Text1 <- function(){
     text = tags$span(
       tags$h3("Fast data visualization and analysis of biological data", style = "color: #337ab7;"),
-      tags$b("FaDA",style = "color: #337ab7;"), "is a user-friendly data visualization and analysis tool developed in R programming with the R Shiny package. FaDA provides users of non-computational background to analyze their data for statistical analysis and quick visualization. This application is useful for common laboratory data outputs, including quantitative PCR, Flow Cytometry or ELISA.",
+      tags$b("FaDA",style = "color: #337ab7;"), "is a user-friendly data visualization and analysis tool developed in R with the R Shiny package. The FaDA application provides a free and intuitive interface that allows biologists without bioinformatics skills to easily and quickly perform common laboratory data analyses. This application is useful for common laboratory data outputs, including quantitative PCR, Flow Cytometry or ELISA.",
       tags$br(),
 
       tags$br(),
