@@ -93,6 +93,7 @@ funCorrelogram <- function(calcTable,infoTest, infoCorrColor1,infoCorrMiddleColo
 #If NA, Replace NA by KNN, need  transposition
   if ( length( which(is.na(calcTable) == TRUE)) >= 1 )
   { calcTable <- t(calcTable)
+     import::from(impute, impute.knn)   #knn function
   dfkNN <- impute.knn(calcTable, k = 10, rowmax = 0.5, colmax =0.8, rng.seed=362436069)
   dfkNN <- t(dfkNN$data)
   calcTable <-as.matrix(dfkNN)
@@ -100,7 +101,7 @@ funCorrelogram <- function(calcTable,infoTest, infoCorrColor1,infoCorrMiddleColo
 
   if (infoTest == "parametric") {
     mcor <- cor(calcTable, method = "pearson", use = "complete.obs")   }
-  else { #unparametric
+  else {                                                                   #unparametric
     mcor <- cor(calcTable, method = "spearman", use = "complete.obs")  }
 
   col <- colorRampPalette(c(infoCorrColor1, infoCorrMiddleColor, infoCorrColor2))(20)
