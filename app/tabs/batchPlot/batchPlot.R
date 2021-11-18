@@ -8,7 +8,7 @@ batchPlotUI <- function(){
 ## Server Functions ####
 batchPlot <- function(input,used_groups,calc_table,colorFunction){          #input parameters
   Plot1 <- function(){
-    validate( need( !is.null(calc_table()), "Please select a properly formatted data set" ) )
+    validate( need( !is.null(calc_table()), "Please select a properly formatted dataset" ) )
     df <- calc_table()
     graphList <- funBatchPlot(used_groups(),df,t(df),colorFunction(),input$Graph)
     grid.arrange(grobs = graphList, ncol= 4) #Arrange the graphs output
@@ -28,12 +28,11 @@ MoreBatchPlot <- function(input,used_groups,calc_table,colorFunction){
 
 ## Independant Functions ####
 funBatchPlot <- function(used_Groups,calc_Table,tCalc_Table,colors,infoGraph){
-  if ( length(levels(as.factor(used_Groups))) * length(colnames(calc_Table)) > 25 ) {               #to define maximum plot to display: n of groups x parameters <25
-    print("Too many data")
-    stop("Too many data to plot on the screen, please download the file instead")
-  }
+  validate( need( length(levels(as.factor(used_Groups))) * length(colnames(calc_Table)) < 25,    #to define maximum plot to display: n of groups x parameters <25
+    "Too many data to plot on the screen, please download the file instead"))
 
   rown <- rownames(calc_Table)
+  if (infoSetylim == "TRUE") {ylim0 = 0} else {ylim0 = NA}
 
   graphList <- lapply(1:nrow(tCalc_Table),function(i){                      #graph function; apply function for all parameters; 
                                                                             #format of the graph is dependant on infoGraph radioButton (whiskers, dot...)
@@ -71,26 +70,46 @@ funBatchPlot <- function(used_Groups,calc_Table,tCalc_Table,colors,infoGraph){
           labs(title= gene , x= "", y="")
       }
 
-        else{
-          print(datatoto$id)                                                                     #barplot according infoGraph input
-          datatoto$id <- factor(datatoto$id, levels = rown)
-          plot <- ggplot(data = datatoto, aes(x = id, y = Expression, fill = group)) +
-            geom_bar(stat = "identity") + theme_classic() +
-            theme(plot.title = element_text(hjust = 1, color="darkred", size=10, face="bold.italic"),
-                  axis.text.x=element_text(angle= 45, hjust = 1))+
+  else{ if (infoGraph == "grouped_bar") {                                                   #grouped bar plot according infoGraph input
+          plot <-
+            ggplot(data = datatoto, aes(x = group, y = Expression, fill = group) ) +
+            geom_bar(stat = "identity", width = 0.5) +
+            geom_point(position=position_jitterdodge(dodge.width=0), size = 2, aes(x = group, fill = group)) +
+            theme_classic() +
+            theme(plot.title = element_text(hjust = 0.5, color="darkred", size=10, face="bold.italic") )+
             scale_fill_manual(values = colors) +
-            geom_point(position=position_jitterdodge(dodge.width=0))+
             theme(legend.position="none") +
-            labs(title= gene, x= "", y="")
+            labs(title= gene , x= "", y="")+
+            ylim(ylim0, max(datatoto$Expression))      ###start y axis to 0
+          }
+
+       else{                                                                                  #bar plot according infoGraph input
+            datatoto$id <- factor(datatoto$id, levels = rown)
+
+            plot <-   
+              ggplot(data = datatoto, aes(x = id, y = Expression, fill = group) ) +
+              geom_bar(stat = "identity", width = 0.5) +
+              theme_classic() +
+              theme(plot.title = element_text(hjust = 1, color="darkred", size=10, face="bold.italic"),
+                    axis.text.x=element_text(angle= 45, hjust = 1))+
+              scale_fill_manual(values = colors) +
+              ylim(ylim0, max(datatoto$Expression))+      ###start y axis to 0
+              geom_point(position=position_jitterdodge(dodge.width=0.7))+
+              theme(legend.position="none") +
+              labs(title= gene, x= "", y="") +
+              facet_grid(.~group, scales="free", space="free_x") ### to highlight the groups in the bar plot
+          }
         }
-      }}
+      } }
     return(plot)
   })
   return(graphList)
 }
 
+
 funMoreBatchPlot <- function(used_Groups, calc_Table,tCalc_Table,colors,infoGraph){     #same graph but only to download as too many plots to be displayed 
   rown <- rownames(calc_Table)
+  if (infoSetylim == "TRUE") {ylim0 = 0} else {ylim0 = NA}
 
     graphList <- lapply(1:nrow(tCalc_Table),function(i){
     gene= rownames(tCalc_Table)[i]
@@ -128,19 +147,35 @@ funMoreBatchPlot <- function(used_Groups, calc_Table,tCalc_Table,colors,infoGrap
           labs(title= gene , x= "", y="")
       }
 
-        else{
-          print(datatoto$id)
-          datatoto$id <- factor(datatoto$id, levels = rown)
-          plot <- ggplot(data = datatoto, aes(x = id, y = Expression, fill = group)) +
-            geom_bar(stat = "identity") + theme_classic() +
-            theme(plot.title = element_text(hjust = 1, color="darkred", size=10,
-                                            face="bold.italic"),
-                  axis.text.x=element_text(angle= 45, hjust = 1))+
-            scale_fill_manual(values = colors) +
-            geom_point(position=position_jitterdodge(dodge.width=0))+
-            theme(legend.position="none") +
-            labs(title= gene, x= "", y="")
-        }
+ 
+      else{ if (infoGraph == "grouped_bar") {
+            plot <-
+              ggplot(data = datatoto, aes(x = group, y = Expression, fill = group) ) +
+              geom_bar(stat = "identity", width = 0.5) +
+              geom_point(position=position_jitterdodge(dodge.width=0), size = 2, aes(x = group, fill = group)) +
+              theme_classic() +
+              theme(plot.title = element_text(hjust = 0.5, color="darkred", size=10, face="bold.italic") )+
+              scale_fill_manual(values = colors) +
+              theme(legend.position="none") +
+              labs(title= gene , x= "", y="")+
+              ylim(ylim0, max(datatoto$Expression))      ###start y axis to 0
+          }
+
+      else{datatoto$id <- factor(datatoto$id, levels = rown)
+              plot <-
+                ggplot(data = datatoto, aes(x = id, y = Expression, fill = group) ) +
+                geom_bar(stat = "identity", width = 0.5) +
+                theme_classic() +
+                theme(plot.title = element_text(hjust = 1, color="darkred", size=10, face="bold.italic"),
+                      axis.text.x=element_text(angle= 45, hjust = 1))+
+                scale_fill_manual(values = colors) +
+                ylim(ylim0, max(datatoto$Expression))+      ###start y axis to 0
+                geom_point(position=position_jitterdodge(dodge.width=0.7))+
+                theme(legend.position="none") +
+                labs(title= gene, x= "", y="") +
+                facet_grid(.~group, scales="free", space="free_x") ### to highlight the groups in the bar plot
+            }
+          }
       }}
     return(plot)
   })
