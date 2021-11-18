@@ -17,7 +17,8 @@ FixedPCA_UI <- function(){
     tags$h3("Principal Component Analysis:", style = "color: steelblue;"),
     plotOutput(outputId ="FixedPCA", width = "80%") %>% withSpinner(color="#0dc5c1"),
     downloadButton('dFixedPCATiff', label="Download as .Tiff"),
-    downloadButton('dFixedPCASvg', label="Download as .SVG")
+    downloadButton('dFixedPCASvg', label="Download as .SVG"),
+    downloadButton('dFixedPCAPdf', label="Download as .pdf")
   )
 }
 
@@ -30,25 +31,30 @@ FixedHeatmap_UI <- function(){
         #sliderInput(inputId = "Heatmap_height", label = "Change height (px)", min = 0, max = 800, value = 400),
 
         downloadButton('dFixedHeatmapTiff', label="Download as .Tiff"),
-        downloadButton('dFixedHeatmapSvg', label="Download as .SVG")
+        downloadButton('dFixedHeatmapSvg', label="Download as .SVG"),
+        downloadButton('dFixedHeatmapPdf', label="Download as .pdf")
       )}
 
 ## Server Functions ####
-ACP <- function(input,used_groups,calc_table,colorFunction){
-  ACP <- function(){
-    validate( need( !is.null(calc_table()), "  " ) )
+CalcACPonly <- function(input, calc_table){   #calculate knn ACP data.frame
+  ACP_table <- reactive({
+    return(funCalcACPonly(calc_table() ))
+  })
+  return(ACP_table)
+}
 
-    #Remplacement des NA par KNN, need a transposition
-    return(funACP(used_groups(), calc_table(), colorFunction(), input$file1$name))
-  }
+ACP <- function(input,used_groups,calc_table,colorFunction, CalcACPonly){
+  ACP <- function(){
+     return(funACP(used_groups(), calc_table(), colorFunction(), input$file1$name, CalcACPonly()))
+ }
   return(ACP)
 }
 
-FixedPCA <- function(input,used_groups,calc_table,colorFunction){        #static PCA
+FixedPCA <- function(input,used_groups,calc_table,colorFunction, CalcACPonly){        #static PCA
   FixedPCA <- function(){
     validate( need( !is.null(calc_table()), " " ) )
     #Remplacement des NA par KNN, nécessite une transposition
-    return(funFixedPCA(used_groups(),calc_table(),colorFunction(),input$file1$name))
+    return(funFixedPCA(used_groups(),calc_table(),colorFunction(),input$file1$name, CalcACPonly()))
   }
   return(FixedPCA)
 }
@@ -72,6 +78,18 @@ FixedHeatmap <- function(input, used_groups, calc_table, colorFunction) {       
 }
 
 ## Independant Functions ###
+funCalcACPonly <- function(calc_Table){
+  import::from(impute, impute.knn)
+  if ( length( which(is.na(calc_Table) == TRUE)) >= 1 ) {
+    ACPcalcTable <- t(calc_Table)
+    dfkNN <- impute.knn(calc_Table, k = 10, rowmax = 0.5, colmax =0.8, rng.seed=362436069)
+    dfkNN <- t(dfkNN$data)
+    ACP_table <-as.matrix(dfkNN)
+  }
+  else{ACPcalcTable <- as.matrix(calc_Table)}
+  ACP_table <- prcomp(ACPcalcTable, scale = TRUE)
+  return(ACP_table)
+}
 
 funHeatmap <- function(used_Groups,calc_Table,colors,infoColor1,infoMiddleColor,infoColor2,infoClustering,infoFilename){
   Groups = as.factor(used_Groups)
@@ -83,26 +101,27 @@ funHeatmap <- function(used_Groups,calc_Table,colors,infoColor1,infoMiddleColor,
   
   mycol <- colorpanel(n=length(breaks)-1,low= infoColor1 , mid=infoMiddleColor,high=infoColor2)
 
-  if (infoClustering == "supervised") {dendro = FALSE} else {dendro = TRUE}
-
-  heatmapPlot <- heatmaply(t(scale(calc_Table)), Colv= dendro, Rowv = TRUE,
+  heatmapPlot <- heatmaply(t(scale(calc_Table)), Colv= infoClustering, Rowv = TRUE,
                            col_side_colors=used_Groups,
                            scale = "none",
                            colors=mycol,
                            breaks=breaks
-  ) %>%  partial_bundle()
+  )  ### %>%  partial_bundle() #partial_bundle to reduce file size and inrease speed
 
   heatmapPlot <- heatmapPlot %>% config(plot_ly(), toImageButtonOptions= list(filename = paste(infoFilename,"_heatmap",sep = "")))
   return(heatmapPlot)
 }
 
 funFixedHeatmap <- function(used_Groups,calc_Table, colors, infoColor1,infoMiddleColor,infoColor2, infoClustering, infoFilename){
+  
+  suppressPackageStartupMessages(library(ComplexHeatmap))   #For  heatmaps  moved in Heatmap
+  import::from(circlize, colorRamp2)
+  library('magick')
 
-  if (infoClustering == "supervised") {dendro = FALSE} else {dendro = TRUE}
   #Set heatmap colors
   col_fun = colorRamp2(c(-2, 0, 2), c(infoColor1, infoMiddleColor, infoColor2) )
 
-  #Set annotation
+  #Set annotations
   Parameter = colors[as.factor(used_Groups)]
   names(Parameter) <- used_Groups
   ha_annot <- HeatmapAnnotation(Group= used_Groups, col= list(Group= Parameter), which='col')
@@ -110,7 +129,7 @@ funFixedHeatmap <- function(used_Groups,calc_Table, colors, infoColor1,infoMiddl
   HeatmapPlot <- Heatmap( t(scale(calc_Table)),
            column_title = infoFilename,
            col= col_fun, name = " ",
-           cluster_columns = dendro,
+           cluster_columns = infoClustering,
            top_annotation = ha_annot,
            heatmap_legend_param= list(
              title = "scale", at = c(-2, 0, 2),
@@ -120,52 +139,12 @@ funFixedHeatmap <- function(used_Groups,calc_Table, colors, infoColor1,infoMiddl
 
       return(FixedHeatmapPlot)    }
 
-funACP <- function(used_Groups,calcTable,colors,infoFilename){
-  if ( length( which(is.na(calcTable) == TRUE)) >= 1 ) {
-    calcTable <- t(calcTable)
-    dfkNN <- impute.knn(calcTable, k = 10, rowmax = 0.5, colmax =0.8, rng.seed=362436069)
-    dfkNN <- t(dfkNN$data)
-    calcTable <-as.matrix(dfkNN)
-  }
 
-  ACP <- prcomp(calcTable, scale = TRUE)
-  ACPdf <- data.frame(ACP$x, "group" = used_Groups)
-  id =rownames(calcTable)
+funFixedPCA <- function(used_Groups,calcTable,colors,infoFilename, ACP_table){
+  dataforACP <- ACP_table
+  ACPdf <- data.frame(dataforACP$x, "group" = used_Groups)
   eig <- data.frame(Components= c(paste("Comp.", rep(1:5))),
-                    Values=c(100 * ACP$sdev[1:5]^2 / sum(ACP$sdev[1:5]^2)))
-
-  Sample= rownames(ACPdf)
-  Group = as.factor(used_Groups)
-
-  graph_acp <- ggplot(ACPdf, aes(x= PC1, y= PC2, color = Group)) +
-    theme_classic() +
-    geom_hline(yintercept = 0, color = "gray70") +
-    geom_vline(xintercept = 0, color = "gray70") +
-    scale_color_manual(values = colors) +
-    geom_point(aes(color = factor(group), Sample=Sample), alpha = 0.55, size = 3) +
-    xlab( paste("PC1 (",format(eig[1,2], digits = 3), "% of explained variance)") ) +
-    ylab( paste("PC2 (",format(eig[2,2], digits = 3), "% of explained variance)") ) +
-    stat_ellipse(type = "t", level = 0.95)
-
-  graphacp <- ggplotly(graph_acp, tooltip="id")  %>%  partial_bundle() %>% config(toImageButtonOptions= list(filename = paste(infoFilename,"_PCA",sep = "")),
-                                                displaylogo = FALSE,
-                                                modeBarButtonsToRemove = c('lasso2d','sendDataToCloud','zoom2d',
-                                                                           'resetScale2d','hoverClosestCartesian','hoverCompareCartesian'))
-  return(graph_acp)
-}
-
-funFixedPCA <- function(used_Groups,calcTable,colors,infoFilename){
-  if ( length( which(is.na(calcTable) == TRUE)) >= 1 ) {
-    calcTable <- t(calcTable)
-    dfkNN <- impute.knn(calcTable, k = 10, rowmax = 0.5, colmax =0.8, rng.seed=362436069)
-    dfkNN <- t(dfkNN$data)
-    calcTable <-as.matrix(dfkNN)
-  }
-
-  ACP <- prcomp(calcTable, center=TRUE, scale = TRUE)
-  ACPdf <- data.frame(ACP$x, "group" = used_Groups)
-  eig <- data.frame(Components= c(paste("Comp.", rep(1:5))),
-                    Values=c(100 * ACP$sdev[1:5]^2 / sum(ACP$sdev[1:5]^2)))
+                    Values=c(100 * dataforACP$sdev[1:5]^2 / sum(dataforACP$sdev[1:5]^2)))
 
   Group = as.factor(used_Groups)
 
@@ -185,12 +164,43 @@ funFixedPCA <- function(used_Groups,calcTable,colors,infoFilename){
     theme_bw() +
     xlab( "Components" ) +
     ylab( "% of explained variance")+
-    ggtitle("% of explained variance for each component of the PCA")
+    ggtitle("% of explained variance")
 
   graph_2acp <- grid.arrange(graph_acp, graph_component, nrow = 1, widths = c(2,1))
 
-    return(graph_2acp)
+  return(graph_2acp)
 }
+
+funACP <- function(used_Groups,calcTable,colors,infoFilename, ACP_table){
+  dataforACP <- ACP_table
+  ACPdf <- data.frame(dataforACP$x, "group" = used_Groups)
+  eig <- data.frame(Components= c(paste("Comp.", rep(1:5))),
+                    Values=c(100 * dataforACP$sdev[1:5]^2 / sum(dataforACP$sdev[1:5]^2)))
+
+  Sample= rownames(ACPdf)
+  Group = as.factor(used_Groups)
+
+  graph_acp <- ggplot(ACPdf, aes(x= PC1, y= PC2, color = Group)) +
+    theme_classic() +
+    geom_hline(yintercept = 0, color = "gray70") +
+    geom_vline(xintercept = 0, color = "gray70") +
+    scale_color_manual(values = colors) +
+    geom_point(aes(color = factor(group), Sample=Sample), alpha = 0.55, size = 3) +
+    xlab( paste("PC1 (",format(eig[1,2], digits = 3), "% of explained variance)") ) +
+    ylab( paste("PC2 (",format(eig[2,2], digits = 3), "% of explained variance)") ) +
+    stat_ellipse(type = "t", level = 0.95)
+
+
+  id =rownames(calcTable)
+  graphacp <- ggplotly(graph_acp, tooltip="id")  %>% toWebGL() %>% config(plot_ly(),
+                                                                        toImageButtonOptions= list(filename = paste(infoFilename,"_PCA",sep = ""),
+                                                                                                   format = "png", scale = 2),
+                                                displaylogo = FALSE,
+                                                modeBarButtonsToRemove = c('lasso2d','sendDataToCloud','zoom2d',
+                                                                           'resetScale2d','hoverClosestCartesian','hoverCompareCartesian'))
+  return(graph_acp)
+}
+
 
 
 ## Output to UI ####
@@ -201,8 +211,6 @@ heatmapOutput <- function(output,reacHeatmap, reacACP, reacFixedHeatmap, reacFix
   output$FixedPCA <- renderPlot({    reacFixedPCA()      })
   output$FixedHeatmap <- renderPlot({    reacFixedHeatmap() }, height = "auto")
 }
-
-
 
 
 
@@ -217,24 +225,42 @@ FixedheatmapDownload <- function(input,output,reacFixedHeatmap){
   output$dFixedHeatmapSvg = downloadHandler(filename =
                                              reactive(paste(input$file1$name,"_heatmap.svg",sep = "")),
                                            content = function(file, compression = "lzw", res = 600) {
-                                             svglite(file)
+                                             svg(file)
                                              print( reacFixedHeatmap() )
                                              dev.off()                      })
+  output$dFixedHeatmapPdf = downloadHandler(filename =
+                                              reactive(paste(input$file1$name,"_heatmap.pdf",sep = "")),
+                                            content = function(file, compression = "lzw", res = 600) {
+                                              pdf(file)
+                                              print( reacFixedHeatmap() )
+                                              dev.off()                      })
+
+
+
 }
 
 FixedPCADownload <- function(input,output,reacFixedPCA){
   output$dFixedPCATiff = downloadHandler(filename =
                                               reactive(paste(input$file1$name,"_PCA.tiff",sep = "")),
-                                              content = function(file, compression = "lzw", res = 600) {
-                                               tiff(file)
+                                              content = function(file) {
+                                               tiff(file, units="in",width= 10, height= 5, compression = "lzw",  res = 600)
                                                print( reacFixedPCA() )
                                                dev.off()                      })
+
 
   output$dFixedPCASvg = downloadHandler(filename =
                                               reactive(paste(input$file1$name,"_PCA.svg",sep = "")),
                                             content = function(file, compression = "lzw", res = 600) {
-                                              svglite(file)
+                                              svg(file,  width= 10, height= 5)
                                               print( reacFixedPCA() )
                                               dev.off()                      })
+
+  output$dFixedPCAPdf = downloadHandler(filename =
+                                          reactive(paste(input$file1$name,"_PCA.pdf",sep = "")),
+                                        content = function(file, compression = "lzw", res = 600) {
+                                          pdf(file,  width= 10, height= 5)
+                                          print( reacFixedPCA() )
+                                          dev.off()                      })
+
 }
 ##End
