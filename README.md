@@ -27,21 +27,21 @@ Each tab is associated with a folder containing the corresponding R code. The si
 #### General Code Structure
 The 'app.R' file is the main R file; all the others R files are called here.
 There is two main functions defined: ui and server:
-- the ui part handles user input, server output and ui display, 
-- the server part processes the ui input to calculate output, communicates via keywords associated to each input and output functions declared in the ui function.
+  - the ui part handles user input, server output and ui display, 
+  - the server part processes the ui input to calculate output, communicates via keywords associated to each input and output functions declared in the ui function.
 
 The ui part of shiny is divided inside the app:
-·	app.R: contains the main ui function that calls the other ui functions and set up the structure of the ui (sidebar panel/main panel),
-·	app/general/general.R: contains the general sidebar ui panel, common for all the tabs,
-·	app/tabs/*.R: each tab have at least one ui function
+	-app.R: contains the main ui function that calls the other ui functions and set up the structure of the ui (sidebar panel/main panel),
+	-app/general/general.R: contains the general sidebar ui panel, common for all the tabs,
+	-app/tabs/*.R: each tab have at least one ui function
 
 The server part of Shiny is also divided inside the app, like the division of the ui part.
 A tab source code is a group of functions called in app.R:
-·	UI: functions that handle the ui part of the tab (input and output).
-·	Server functions: functions which handles the input from ui and process the output within a reactive value. These functions return a reactive value output.
-·	Independent functions: each server function is associated to an independent shiny function. These functions calculate the output of the server from the input.
-·	Output to UI: functions that handle the output to the UI.
-·	Download: functions which handles the download part.
+	-UI: functions that handle the ui part of the tab (input and output).
+	-Server functions: functions which handles the input from ui and process the output within a reactive value. These functions return a reactive value output.
+	-Independent functions: each server function is associated to an independent shiny function. These functions calculate the output of the server from the input.
+	-Output to UI: functions that handle the output to the UI.
+	-Download: functions which handles the download part.
 
 - 'app.R' file:
 UI fonctions from tab source files are called here (sidebar and main panel). Some are displayed with a condition (conditionalPanel).
