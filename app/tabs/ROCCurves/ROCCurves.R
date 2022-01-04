@@ -53,8 +53,9 @@ AUCTable <- function(input, reacUsedTable, reacCalcTable){
 funROCPlot <- function(used_Table, infoSelectColor,
                        infoGroup1, infoGroup2, infoParameter1, calcTable,
                        infoLineSize) {
-#Library for ROC Curves: 
-    import::from(pROC, roc, plot.roc, coords)
+#Library for ROC Curves:
+    #import::from(pROC, roc, plot.roc, coords)
+    req( !is.null(used_Table), import::from(pROC, roc, plot.roc, coords), cancelOutput = TRUE) #req needed to load the library only when a table is added to speed up app loading
 
       # prepare a table with selected groups:
   df3 <- used_Table[c(which(used_Table[,1] == infoGroup1), which(used_Table[,1] == infoGroup2)),]
