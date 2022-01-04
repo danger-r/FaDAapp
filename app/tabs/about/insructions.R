@@ -93,7 +93,9 @@ While the Bonferroni method is useful with a fairly small number of comparisons,
 
   tags$br(),
   hr(),
-  tags$h4("Copyright 2021 Center of Research in Transplantation and Immunology Version 2021.11.17", align="center"),
+      
+#version      
+  tags$h4("Copyright 2022, Center of Research in Transplantation and Immunology, Version 2022.01.04", align="center"),
 
       html = TRUE)
   }
