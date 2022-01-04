@@ -76,7 +76,7 @@ plotDescr <- function(input,used_groups,calc_table,colorFunction,mytableStat){
  #descriptive table:
 funMytableDescr <- function(used_Groups,calc_Table,infoTest){
 
-  library(DT)               #For datatables functions
+  req( !is.null(calc_Table), library(DT), cancelOutput = TRUE)  #For datatables functions
 
   ngroup <- length(levels(as.factor(used_Groups)))
 
