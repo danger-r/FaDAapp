@@ -90,6 +90,10 @@ corrGraph <- function(input,reacCalcTable){
 funCorrelogram <- function(calcTable,infoTest, infoCorrColor1,infoCorrMiddleColor,infoCorrColor2,
                            infoCorrFormat, infoCorrLayout){
 
+#load corrplot library:
+  req( !is.null(calcTable), library(corrplot), cancelOutput = TRUE)  #req needed to load the library only when a table is added to speed up app loading
+ 
+  
 #If NA, Replace NA by KNN, need  transposition
   if ( length( which(is.na(calcTable) == TRUE)) >= 1 )
   { calcTable <- t(calcTable)
@@ -177,7 +181,7 @@ correlogramOutput <- function(output,reacCorrTable,reacPvalCorrTable,reacCorrelo
 
   output$Corr_table <- renderDT({     datatable(reacCorrTable()$table,
                                                 extensions="Buttons",
-                                                options = list(pageLength = 20, searching = FALSE, dom = 'Bt',
+                                                options = list(pageLength = 5, searching = FALSE, dom = 'Btpl',
                                                                buttons =  list( 'copy',
                                                                                 list(title = paste(reacNameTable(),"_CorrTable",sep=""), extend='csv',
                                                                                      filename = paste(reacNameTable(),"_CorrTable",sep="")),
@@ -194,14 +198,15 @@ correlogramOutput <- function(output,reacCorrTable,reacPvalCorrTable,reacCorrelo
 
   output$pvalCorr_table <- renderDT({     datatable(reacPvalCorrTable()$table,
                                                     extensions="Buttons",
-                                                    options = list(pageLength = 20, searching = FALSE, dom = 'Bt',
+                                                    options = list(pageLength = 10, searching = FALSE, dom = 'Btpl',
                                                                    buttons =  list( 'copy',
                                                                                     list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='csv',
                                                                                          filename = paste(reacNameTable(),"_PvalCorrTable",sep="")),
                                                                                     list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='excel',
                                                                                          filename = paste(reacNameTable(),"_PvalCorrTable",sep="")),
-                                                                                    list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='pdf',
-                                                                                         filename= paste(reacNameTable(),"_PvalCorrTable",sep=""))))) %>%
+                                                                                    #list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='pdf',
+                                                                                    #     filename= paste(reacNameTable(),"_PvalCorrTable",sep="")) #pdf option removed
+                                                                                  ))) %>%
                                      
                   ## formatStyle to higlight p-values  according threshold (pValCorrSelect):                                                           
                                                                 formatStyle(
@@ -217,14 +222,15 @@ corrGraphOutput <- function(output,reacCalcTable,reacCorrGraph,reacNameTable,rea
   output$Corr_table2 <- renderDT({     datatable(reacCorrTable()$table,
                                                  selection= list(mode='single', selected = matrix(c(1,1), ncol = 2), target = 'cell'),
                                                  extensions="Buttons",
-                                                 options = list(pageLength = 20, searching = FALSE, dom = 'Bt',
+                                                 options = list(pageLength = 10, searching = FALSE, dom = 'Btpl',
                                                                 buttons =  list( 'copy',
                                                                                  list(title = paste(reacNameTable(),"_CorrTable",sep=""), extend='csv',
                                                                                       filename = paste(reacNameTable(),"_CorrTable",sep="")),
                                                                                  list(title = paste(reacNameTable(),"_CorrTable",sep=""), extend='excel',
-                                                                                      filename = paste(reacNameTable(),"_CorrTable",sep="")),
-                                                                                 list(title = paste(reacNameTable(),"_CorrTable",sep=""), extend='pdf',
-                                                                                      filename= paste(reacNameTable(),"_CorrTable",sep="")) )
+                                                                                      filename = paste(reacNameTable(),"_CorrTable",sep=""))
+                                                                                 #list(title = paste(reacNameTable(),"_CorrTable",sep=""), extend='pdf',
+                                                                                  #    filename= paste(reacNameTable(),"_CorrTable",sep="")) #pdf not use as not the full table is displayed
+                                                                               )
                                                  ) )  %>%  formatStyle(colnames(reacCorrTable()$table), fontWeight = styleInterval( c(-reacCorrTable()$corrSelect , reacCorrTable()$corrSelect),c('bold','normal','bold')),
                                                                        backgroundColor = styleInterval(  c(-reacCorrTable()$corrSelect, reacCorrTable()$corrSelect), c('lightyellow', 'white','lightyellow')))
   })
