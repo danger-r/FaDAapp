@@ -99,6 +99,7 @@ funHeatmap <- function(used_Groups,calc_Table,colors,infoColor1,infoMiddleColor,
   breaks=append(breaks, 10)
   breaks=append(breaks, -10, 0)
   
+  suppressPackageStartupMessages(library(gplots))   #For colorpanels in the heatmap
   mycol <- colorpanel(n=length(breaks)-1,low= infoColor1 , mid=infoMiddleColor,high=infoColor2)
 
   heatmapPlot <- heatmaply(t(scale(calc_Table)), Colv= infoClustering, Rowv = TRUE,
@@ -106,17 +107,21 @@ funHeatmap <- function(used_Groups,calc_Table,colors,infoColor1,infoMiddleColor,
                            scale = "none",
                            colors=mycol,
                            breaks=breaks
-  )  ### %>%  partial_bundle() #partial_bundle to reduce file size and inrease speed
+  )  ### %>%  partial_bundle() #partial_bundle to reduce file size and inrease speed (but decrease quality)
 
-  heatmapPlot <- heatmapPlot %>% config(plot_ly(), toImageButtonOptions= list(filename = paste(infoFilename,"_heatmap",sep = "")))
+  heatmapPlot <- heatmapPlot %>% config(plot_ly(), toImageButtonOptions= list(filename = paste(infoFilename,"_heatmap",sep = ""),
+                                                                             format = "png", scale = 2))
   return(heatmapPlot)
 }
 
 funFixedHeatmap <- function(used_Groups,calc_Table, colors, infoColor1,infoMiddleColor,infoColor2, infoClustering, infoFilename){
   
-  suppressPackageStartupMessages(library(ComplexHeatmap))   #For  heatmaps  moved in Heatmap
-  import::from(circlize, colorRamp2)
-  library('magick')
+  #load library:
+  req( !is.null(calc_Table), library(ComplexHeatmap), cancelOutput = TRUE)
+  req( !is.null(calc_Table), import::from(circlize, colorRamp2), cancelOutput = TRUE)
+  #suppressPackageStartupMessages(library(ComplexHeatmap))   #For  heatmaps  moved in Heatmap
+  #import::from(circlize, colorRamp2)
+  #library('magick')
 
   #Set heatmap colors
   col_fun = colorRamp2(c(-2, 0, 2), c(infoColor1, infoMiddleColor, infoColor2) )
@@ -234,9 +239,6 @@ FixedheatmapDownload <- function(input,output,reacFixedHeatmap){
                                               pdf(file)
                                               print( reacFixedHeatmap() )
                                               dev.off()                      })
-
-
-
 }
 
 FixedPCADownload <- function(input,output,reacFixedPCA){
