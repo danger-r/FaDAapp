@@ -11,6 +11,10 @@ import::from(plotly, plotlyOutput, renderPlotly, ggplotly) ## import only requir
 library(gridExtra, verbose=FALSE)        #Grid display
 library(RColorBrewer, verbose=FALSE)    #For the color palette
 
+library(DT)               #For datatabkes functions
+
+
+
 ##moved in other tabs to improve loading speed:
 #library(ggplot2)          #Plot graphs
 #library(plotly)           #Plot interactives graphs
@@ -21,7 +25,6 @@ library(RColorBrewer, verbose=FALSE)    #For the color palette
 #library(heatmaply)        #For interactive heatmaps
 #library(corrplot)         #For correlogram
 #library(data.table)       #For the import table (fread)
-#library(DT)               #For datatabkes functions
 #import::from(impute, impute.knn)
 #library(FSA)              #For some tests (DunnTest)
 #library(pROC)             #For ROC Curves
