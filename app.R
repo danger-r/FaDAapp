@@ -172,6 +172,7 @@ server <- function(input, output, session) {
 # Heatmap and PCA (Tab 3):
   reacFixedHeatmap <- FixedHeatmap(input,reacUsedGroups,reacCalcTable,reacColorFunction)    #static heatmap (using groups (reacUsedGroups), calculated Table (reacCalcTable), colors (reacColorFunction) as input)
   reacHeatmap <- heatMap(input,reacUsedGroups,reacCalcTable,reacColorFunction)              #interactive heatmap 
+  reacCalcACPonly <- CalcACPonly(input,reacCalcTable)                                       #to calculate PCA before graphs
   reacACP <- ACP(input,reacUsedGroups,reacCalcTable,reacColorFunction, reacCalcACPonly)                      #interactive PCA
   reacFixedPCA <- FixedPCA(input,reacUsedGroups,reacCalcTable,reacColorFunction, reacCalcACPonly)            #static PCA
 
