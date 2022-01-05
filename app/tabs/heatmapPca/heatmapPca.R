@@ -79,16 +79,19 @@ FixedHeatmap <- function(input, used_groups, calc_table, colorFunction) {       
 
 ## Independant Functions ###
 funCalcACPonly <- function(calc_Table){
-  import::from(impute, impute.knn)
+  
   if ( length( which(is.na(calc_Table) == TRUE)) >= 1 ) {
+    import::from(impute, impute.knn)
     ACPcalcTable <- t(calc_Table)
     dfkNN <- impute.knn(calc_Table, k = 10, rowmax = 0.5, colmax =0.8, rng.seed=362436069)
     dfkNN <- t(dfkNN$data)
     ACP_table <-as.matrix(dfkNN)
   }
   else{ACPcalcTable <- as.matrix(calc_Table)}
-  ACP_table <- prcomp(ACPcalcTable, scale = TRUE)
+  
+  ACP_table <- prcomp(ACPcalcTable, scale = TRUE)  
   return(ACP_table)
+  
 }
 
 funHeatmap <- function(used_Groups,calc_Table,colors,infoColor1,infoMiddleColor,infoColor2,infoClustering,infoFilename){
@@ -119,10 +122,12 @@ funFixedHeatmap <- function(used_Groups,calc_Table, colors, infoColor1,infoMiddl
   #load library:
   req( !is.null(calc_Table), library(ComplexHeatmap), cancelOutput = TRUE)
   req( !is.null(calc_Table), import::from(circlize, colorRamp2), cancelOutput = TRUE)
-  #suppressPackageStartupMessages(library(ComplexHeatmap))   #For  heatmaps  moved in Heatmap
-  #import::from(circlize, colorRamp2)
-  #library('magick')
 
+  req( !is.null(calc_Table), library(future), cancelOutput = TRUE)
+  req( !is.null(calc_Table), library(promises), cancelOutput = TRUE)
+  plan(multisession)
+
+    future_promise(seed=TRUE, {
   #Set heatmap colors
   col_fun = colorRamp2(c(-2, 0, 2), c(infoColor1, infoMiddleColor, infoColor2) )
 
@@ -142,7 +147,9 @@ funFixedHeatmap <- function(used_Groups,calc_Table, colors, infoColor1,infoMiddl
 
   FixedHeatmapPlot <- draw(HeatmapPlot, heatmap_legend_side = "left", annotation_legend_side = "left")
 
-      return(FixedHeatmapPlot)    }
+      return(FixedHeatmapPlot) 
+    }) #end future_promise
+  }
 
 
 funFixedPCA <- function(used_Groups,calcTable,colors,infoFilename, ACP_table){

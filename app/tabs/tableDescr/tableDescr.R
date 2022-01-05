@@ -117,9 +117,9 @@ funMytableDescr <- function(used_Groups,calc_Table,infoTest){
 funMytableStat <- function(used_Groups,calc_Table,infoDesign,
                            infoTest, infoCorrection,infoEqualvariance, infopValSelect, infoseldigits){
 
-  library(DT)               #For datatables functions
-  suppressPackageStartupMessages(library(heatmaply))    #needed for table config option
-
+  req( !is.null(calc_Table), library(DT), cancelOutput = TRUE)  #For datatables functions
+  req( !is.null(calc_Table), library(heatmaply), cancelOutput = TRUE)  #needed for table config option
+  
   Val <- matrix(nrow= 1, ncol= length(colnames(calc_Table) ), dimnames = list(list("p.value"), colnames(calc_Table) ) )      ## create a matrix according n of paramters in the 'calc_Table'
 
 ###for 2 groups:
@@ -206,8 +206,14 @@ funPlotDescr <- function(used_Groups, calc_Table, gcol, data,
 
   if (infoSetylim == "TRUE") {ylim0 = 0} else {ylim0 = NA}
 
-  library(ggplot2, verbose=FALSE)          #Plot graphs
-
+  req( !is.null(calc_Table), library(ggplot2), cancelOutput = TRUE)  #Plot graphs
+  req( !is.null(calc_Table), library(future), cancelOutput = TRUE)
+  req( !is.null(calc_Table), library(promises), cancelOutput = TRUE)
+  plan(multisession)
+  
+  #future_promise:
+    future_promise(seed=TRUE, {
+     
   plotList <- lapply(data,function(elem){
     datatoto <- data.frame(Value = elem$value, group = group, id = rown )
     ec <- max(elem$value)-min(elem$value)
@@ -314,6 +320,8 @@ funPlotDescr <- function(used_Groups, calc_Table, gcol, data,
     res <- subplot(as.vector(plotList),titleY = TRUE, titleX = TRUE)
   }
   return(res)
+    
+  })## end futue promise
 }
 
 

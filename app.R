@@ -11,7 +11,7 @@ import::from(plotly, plotlyOutput, renderPlotly, ggplotly) ## import only requir
 library(gridExtra, verbose=FALSE)        #Grid display
 library(RColorBrewer, verbose=FALSE)    #For the color palette
 
-library(DT)               #For datatabkes functions
+#library(DT)               #For datatabkes functions, moved in General Tab
 
 
 

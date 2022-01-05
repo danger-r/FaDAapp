@@ -105,6 +105,10 @@ materialSwitch(inputId = "Setylim", status = "info")
 )  }
 
 generalTableHead <- function(){
+  
+  library(DT)
+  
+  
   tagList(
     tags$div(
       h3(textOutput("filename")),                                    #indicate the name of the uploaded table
@@ -123,7 +127,7 @@ generalTableHead <- function(){
     bsTooltip("sw_head","Display the beginning of the table"),
     tags$br(),tags$br(),
     bsModal("modal",textOutput("filename2"),trigger = "sw_head", size = 'large',
-              DTOutput("head")
+            dataTableOutput("head")
 
     )
   )
