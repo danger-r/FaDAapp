@@ -27,6 +27,7 @@ isTransposedInput <- function(dataframe){
 validingInput <- function(infoFileDatapath,decSeparator = "."){
   if (  grepl(".txt", infoFileDatapath)  == T ) { separator= "\t"} else {separator=";"}
   #df <- read.csv(infoFileDatapath, sep =  separator, dec = decSeparator) #old function
+  import::from(data.table, fread)                                           #fread from data.table library
   df <- fread(infoFileDatapath, sep =  separator, dec = decSeparator)     #use of fread to accelerate data read
   df <- as.data.frame(df)
 
