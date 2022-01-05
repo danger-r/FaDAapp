@@ -6,6 +6,9 @@ batchPlotUI <- function(){
 }
 
 ## Server Functions ####
+library(grid)             #Grid display
+library(ggplot2, verbose=FALSE)          #Plot graphs
+
 batchPlot <- function(input,used_groups,calc_table,colorFunction){          #input parameters
   Plot1 <- function(){
     validate( need( !is.null(calc_table()), "Please select a properly formatted dataset" ) )
@@ -47,7 +50,8 @@ funBatchPlot <- function(used_Groups,calc_Table,tCalc_Table,colors,infoGraph){
         scale_fill_manual(values = colors) +
         geom_point(position=position_jitterdodge(dodge.width=0))+
         theme(legend.position="none") +
-        labs(title= gene, x= "", y="")
+        labs(title= gene, x= "", y="")+
+        ylim(ylim0, max(datatoto$Expression))      ###start y axis to 0
     }
     else{ if (infoGraph == "point") {                                                                     #point plot according infoGraph input
       plot <- ggplot(data = datatoto, aes(x = group, y = Expression, color = group)) + theme_classic() +
@@ -56,7 +60,8 @@ funBatchPlot <- function(used_Groups,calc_Table,tCalc_Table,colors,infoGraph){
         scale_color_manual(values = colors) +
         geom_point(position=position_jitterdodge(dodge.width=0))+
         theme(legend.position="none") +
-        labs(title= gene, x= "", y="")
+        labs(title= gene, x= "", y="")+
+        ylim(ylim0, max(datatoto$Expression))      ###start y axis to 0
     }
 
       else{ if (infoGraph == "violin") {                                                                     #violin plot according infoGraph input
@@ -67,7 +72,8 @@ funBatchPlot <- function(used_Groups,calc_Table,tCalc_Table,colors,infoGraph){
           geom_point(position=position_jitterdodge(dodge.width=0) ) +
           scale_fill_manual(values = colors) +
           theme(legend.position="none") +
-          labs(title= gene , x= "", y="")
+          labs(title= gene , x= "", y="")+
+          ylim(ylim0, max(datatoto$Expression))      ###start y axis to 0
       }
 
   else{ if (infoGraph == "grouped_bar") {                                                   #grouped bar plot according infoGraph input
@@ -123,7 +129,8 @@ funMoreBatchPlot <- function(used_Groups, calc_Table,tCalc_Table,colors,infoGrap
         scale_fill_manual(values = colors) +
         geom_point(position=position_jitterdodge(dodge.width=0))+
         theme(legend.position="none") +
-        labs(title= gene, x= "", y="")
+        labs(title= gene, x= "", y="")+
+        ylim(ylim0, max(datatoto$Expression))      ###start y axis to 0
     }
     else{ if (infoGraph == "point") {
       plot <- ggplot(data = datatoto, aes(x = group, y = Expression, color = group)) + theme_classic() +
@@ -133,7 +140,8 @@ funMoreBatchPlot <- function(used_Groups, calc_Table,tCalc_Table,colors,infoGrap
         scale_color_manual(values = colors) +
         geom_point(position=position_jitterdodge(dodge.width=0))+
         theme(legend.position="none") +
-        labs(title= gene, x= "", y="")
+        labs(title= gene, x= "", y="")+
+        ylim(ylim0, max(datatoto$Expression))      ###start y axis to 0
     }
 
       else{ if (infoGraph == "violin") {
@@ -144,7 +152,8 @@ funMoreBatchPlot <- function(used_Groups, calc_Table,tCalc_Table,colors,infoGrap
           geom_point(position=position_jitterdodge(dodge.width=0) ) +
           scale_fill_manual(values = colors) +
           theme(legend.position="none") +
-          labs(title= gene , x= "", y="")
+          labs(title= gene , x= "", y="")+
+          ylim(ylim0, max(datatoto$Expression))      ###start y axis to 0
       }
 
  
