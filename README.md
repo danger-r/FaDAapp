@@ -69,8 +69,8 @@ UI or independent functions in a specific tab can be modified in the correspondi
 To add a function that needs an input, a function has to be created in the corresponding tab, which returned a reactive value. Then, the reactive value has to be called in the app.R ui and in app.R output part (server).
 
 
-##If you like FaDA and use it, please consider citing the related article:
-FaDA: A web application for regular laboratory data analyses, Danger et al, PLoS One. 2021 Dec 20;16(12):e0261083
+### If you like FaDA and use it, please consider citing the related article:
+FaDA: A web application for regular laboratory data analyses, Danger et al, PLoS One. 2021 Dec 20;16(12):e0261083.
 Pubmed link: https://pubmed.ncbi.nlm.nih.gov/34928943/
 PlosOne link: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0261083
 
