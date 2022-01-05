@@ -1,4 +1,4 @@
-##FaDA Version 17-nov-2021
+##FaDA Version 04-Jan-2022
 
 # ====== import R libraries: ####
 library(shiny)            #For shiny
@@ -218,4 +218,5 @@ server <- function(input, output, session) {
 ###
 # Run the application
 shinyApp(ui = ui, server = server)
+
 ###End
