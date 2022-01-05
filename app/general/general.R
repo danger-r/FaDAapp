@@ -174,7 +174,6 @@ HeatmapOptionUI <- function(){
 
 
 
------------------------------------------------------------------------------
 ## Server part ####
 
 observeGeneral <- function(input,session,reacUsedTable){
