@@ -196,24 +196,40 @@ correlogramOutput <- function(output,reacCorrTable,reacPvalCorrTable,reacCorrelo
                                                                       )
   })
 
-  output$pvalCorr_table <- renderDT({     datatable(reacPvalCorrTable()$table,
+  
+    output$pvalCorr_table <- renderDT({     datatable(reacPvalCorrTable()$table,
                                                     extensions="Buttons",
-                                                    options = list(pageLength = 10, searching = FALSE, dom = 'Btpl',
+                                                    options = list(pageLength = 10, searching = FALSE, dom = 'Btpl', server = FALSE,
                                                                    buttons =  list( 'copy',
                                                                                     list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='csv',
                                                                                          filename = paste(reacNameTable(),"_PvalCorrTable",sep="")),
                                                                                     list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='excel',
-                                                                                         filename = paste(reacNameTable(),"_PvalCorrTable",sep="")),
-                                                                                    #list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='pdf',
-                                                                                    #     filename= paste(reacNameTable(),"_PvalCorrTable",sep="")) #pdf option removed
-                                                                                  ))) %>%
-                                     
-                  ## formatStyle to higlight p-values  according threshold (pValCorrSelect):                                                           
+                                                                                         filename = paste(reacNameTable(),"_PvalCorrTable",sep=""))
+                                                                                    #list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='pdf',  #pdf option removed
+                                                                                    #     filename= paste(reacNameTable(),"_PvalCorrTable",sep=""))
+                                                                                    ))) %>%
                                                                 formatStyle(
                                                                   colnames(reacPvalCorrTable()$table),
                                                                   fontWeight = styleInterval( c(reacPvalCorrTable()$pValCorrSelect), c('bold','normal')),
                                                                   backgroundColor = styleInterval( c(reacPvalCorrTable()$pValCorrSelect), c('lightyellow', 'white')) )
+  })
 
+  
+    output$pvalCorr_table <- renderDT({     datatable(reacPvalCorrTable()$table,
+                                                    extensions="Buttons",
+                                                    options = list(pageLength = 10, searching = FALSE, dom = 'Btpl', server = FALSE,
+                                                                   buttons =  list( 'copy',
+                                                                                    list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='csv',
+                                                                                         filename = paste(reacNameTable(),"_PvalCorrTable",sep="")),
+                                                                                    list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='excel',
+                                                                                         filename = paste(reacNameTable(),"_PvalCorrTable",sep=""))
+                                                                                    #list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='pdf',  #pdf option removed
+                                                                                    #     filename= paste(reacNameTable(),"_PvalCorrTable",sep=""))
+                                                                                    ))) %>%
+                                                                formatStyle(
+                                                                  colnames(reacPvalCorrTable()$table),
+                                                                  fontWeight = styleInterval( c(reacPvalCorrTable()$pValCorrSelect), c('bold','normal')),
+                                                                  backgroundColor = styleInterval( c(reacPvalCorrTable()$pValCorrSelect), c('lightyellow', 'white')) )
   })
 
 }
