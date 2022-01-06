@@ -19,18 +19,18 @@ batchPlot <- function(input,used_groups,calc_table,colorFunction){          #inp
   return(Plot1)
 }
 
-MoreBatchPlot <- function(input,used_groups,calc_table,colorFunction){
+MoreBatchPlot <- function(input,used_groups,calc_table,colorFunction, infoSetylim){
   Plot2 <- function(){
     validate( need( !is.null(calc_table()), "Please select a properly formatted data set" ) )
     df <- calc_table()
-    graphList <- funMoreBatchPlot(used_groups(),df,t(df),colorFunction(),input$Graph)
+    graphList <- funMoreBatchPlot(used_groups(),df,t(df),colorFunction(),input$Graph, input$Setylim)
     marrangeGrob(graphList, nrow=2, ncol=2, vp=viewport(width=0.9, height=0.9))
   }
   return(Plot2)
 }
 
 ## Independant Functions ####
-funBatchPlot <- function(used_Groups,calc_Table,tCalc_Table,colors,infoGraph){
+funBatchPlot <- function(used_Groups,calc_Table,tCalc_Table,colors,infoGraph, infoSetylim){
   validate( need( length(levels(as.factor(used_Groups))) * length(colnames(calc_Table)) < 25,    #to define maximum plot to display: n of groups x parameters <25
     "Too many data to plot on the screen, please download the file instead"))
 
@@ -113,7 +113,7 @@ funBatchPlot <- function(used_Groups,calc_Table,tCalc_Table,colors,infoGraph){
 }
 
 
-funMoreBatchPlot <- function(used_Groups, calc_Table,tCalc_Table,colors,infoGraph){     #same graph but only to download as too many plots to be displayed 
+funMoreBatchPlot <- function(used_Groups, calc_Table,tCalc_Table,colors,infoGraph, infoSetylim){     #same graph but only to download as too many plots to be displayed 
   rown <- rownames(calc_Table)
   if (infoSetylim == "TRUE") {ylim0 = 0} else {ylim0 = NA}
 
