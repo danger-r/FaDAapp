@@ -179,17 +179,19 @@ correlogramOutput <- function(output,reacCorrTable,reacPvalCorrTable,reacCorrelo
 
   output$Correlogram <- renderPlot({    reacCorrelogram()      })  #or renderPlotly for interactive version
 
-  output$Corr_table <- renderDT({     datatable(reacCorrTable()$table,
-                                                extensions="Buttons",
-                                                options = list(pageLength = 5, searching = FALSE, dom = 'Btpl',
-                                                               buttons =  list( 'copy',
-                                                                                list(title = paste(reacNameTable(),"_CorrTable",sep=""), extend='csv',
-                                                                                     filename = paste(reacNameTable(),"_CorrTable",sep="")),
-                                                                                list(title = paste(reacNameTable(),"_CorrTable",sep=""), extend='excel',
-                                                                                     filename = paste(reacNameTable(),"_CorrTable",sep="")),
-                                                                                list(title = paste(reacNameTable(),"_CorrTable",sep="") )
-  ## formatStyle to higlight correlation according threshold (corrSelect):                                                           
-                                                ) ))  %>%  formatStyle(colnames(reacCorrTable()$table),
+  output$Corr_table <- renderDT({    datatable(reacCorrTable()$table,
+                                                 extensions="Buttons",
+                                                 options = list(pageLength = 10, searching = FALSE, dom = 'Btpl',
+                                                                buttons =  list( 'copy',
+                                                                                 list(title = paste(reacNameTable(),"_CorrTable",sep=""), extend='csv',
+                                                                                      filename = paste(reacNameTable(),"_CorrTable",sep="")),
+                                                                                 list(title = paste(reacNameTable(),"_CorrTable",sep=""), extend='excel',
+                                                                                      filename = paste(reacNameTable(),"_CorrTable",sep=""))
+                                                                                 #list(title = paste(reacNameTable(),"_CorrTable",sep=""), extend='pdf',
+                                                                                  #    filename= paste(reacNameTable(),"_CorrTable",sep="")) #pdf not use as not the full table is displayed
+                                                            
+                                                         ## formatStyle to higlight correlation according threshold (corrSelect):                                                           
+                                                                               )) )  %>%  formatStyle(colnames(reacCorrTable()$table),
                                                                       fontWeight = styleInterval(  c(-reacCorrTable()$corrSelect, reacCorrTable()$corrSelect), c('bold','normal','bold')),
                                                                       backgroundColor = styleInterval(  c(-reacCorrTable()$corrSelect, reacCorrTable()$corrSelect), c('lightyellow', 'white','lightyellow'))
                                                                       )
