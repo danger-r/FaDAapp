@@ -192,7 +192,7 @@ correlogramOutput <- function(output,reacCorrTable,reacPvalCorrTable,reacCorrelo
                                                 ) )  %>%  formatStyle(colnames(reacCorrTable()$table),
                                                                       fontWeight = styleInterval(  c(-reacCorrTable()$corrSelect, reacCorrTable()$corrSelect), c('bold','normal','bold')),
                                                                       backgroundColor = styleInterval(  c(-reacCorrTable()$corrSelect, reacCorrTable()$corrSelect), c('lightyellow', 'white','lightyellow'))
-                                                                      )
+                                                                      ))
   })
 
   
