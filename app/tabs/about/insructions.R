@@ -86,7 +86,7 @@ While the Bonferroni method is useful with a fairly small number of comparisons,
   tags$br(),
   "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
   tags$br(),
-  "See the GNU General Public License for more details at :", a("GNU General Public License", href="https://www.gnu.org/licenses/", style = "color: steelblue;"),
+  "See the GNU General Public License for more details at :", a("GNU General Public License", href="https://www.gnu.org/licenses/", target="_blank", style = "color: steelblue;"),
 
   tags$br(),
   "Uploaded data and analysis results will not be saved on our servers. However, the application is provided", '" as is "', "without warranty of any kind, and thus, you must refrain from uploading any confidential data. You may instead download the code and run the app locally on your private computer and network. We are not responsible for the confidentiality, availability, security, loss, misuse or misappropriation of any data you submit to this application.", style = "color: black;",
