@@ -55,12 +55,12 @@ about <- function(){
       tags$h4("Citation", style = "color: #33b7b2;"),
       "If you like FaDA and use it, please consider citing the related article:",
       tags$br(),
-        a("FaDA: A web application for regular laboratory data analyses", href = "https://pubmed.ncbi.nlm.nih.gov/34928943/", style = "color: steelblue;"),
-          a("Danger et al, PLoS One. 2021 Dec 20;16(12):e0261083", href= "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0261083", style = "color: grey;"),
+        a("FaDA: A web application for regular laboratory data analyses", href = "https://pubmed.ncbi.nlm.nih.gov/34928943/", target="_blank", style = "color: steelblue;"),
+          a("Danger et al, PLoS One. 2021 Dec 20;16(12):e0261083", href= "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0261083", target="_blank", style = "color: grey;"),
       tags$br(),
 
      #Github:
-      tags$b("FaDA",style = "color: #337ab7;"), "application code is available through Github:", a("https://github.com/danger-r/FaDAapp", href="https://github.com/danger-r/FaDAapp", style = "color: steelblue;"),
+      tags$b("FaDA",style = "color: #337ab7;"), "application code is available through Github:", a("https://github.com/danger-r/FaDAapp", href="https://github.com/danger-r/FaDAapp", target="_blank", style = "color: steelblue;"),
 
       tags$br(),
       tags$br(),
@@ -69,7 +69,7 @@ about <- function(){
       tags$br(),
       "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE",
       tags$br(),
-      "See the GNU General Public License for more details at :", a("GNU General Public License", href="https://www.gnu.org/licenses/", style = "color: steelblue;"),
+      "See the GNU General Public License for more details at :", a("GNU General Public License", href="https://www.gnu.org/licenses/", target="_blank", style = "color: steelblue;"),
 
       tags$br(),
       "Uploaded data and analysis results will not be saved on our servers. However, the application is provided", '" as is "', "without warranty of any kind, and thus, you must refrain fom uploading any confidential data. You may instead download the code and run the app locally on your private computer and network. We are not responsible for the confidentiality, availability, security, loss, misuse or misappropriation of any data you submit to this application.", style = "color: black;",
