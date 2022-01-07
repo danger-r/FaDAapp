@@ -140,11 +140,11 @@ TutorialOptionUI <- function(){
   ##citing FaDA:
   br("If you like FaDA and use it, please consider citing the related article:",
        tags$br(),
-  a("FaDA: A web application for regular laboratory data analyses", href = "https://pubmed.ncbi.nlm.nih.gov/34928943/", style = "color: steelblue;"),
-  a("Danger et al, PLoS One. 2021 Dec 20;16(12):e0261083", href= "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0261083", style = "color: grey;")),
+  a("FaDA: A web application for regular laboratory data analyses", href = "https://pubmed.ncbi.nlm.nih.gov/34928943/", target="_blank", style = "color: steelblue;"),
+  a("Danger et al, PLoS One. 2021 Dec 20;16(12):e0261083", href= "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0261083", target="_blank", style = "color: grey;")),
   
     tags$br(),
-  tags$b("FaDA",style = "color: #337ab7;"), "application code is available through Github:", a("https://github.com/danger-r/FaDAapp", href="https://github.com/danger-r/FaDAapp", style = "color: steelblue;"),
+  tags$b("FaDA",style = "color: #337ab7;"), "application code is available through Github:", a("https://github.com/danger-r/FaDAapp", href="https://github.com/danger-r/FaDAapp", target="_blank", style = "color: steelblue;"),
   
   br( a(icon("mail-bulk"), href="mailto:fada.contact@univ-nantes.fr"),
       "If you have any question, you can send an e-mail to",
