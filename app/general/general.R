@@ -95,8 +95,9 @@ bsPopover("Equalvariance",
 # make choice of plot type:
       radioButtons(inputId = "Graph",
                    "Graph options:",
-                   choices = c(Whiskers = "whiskers", Point = "point",
-                               Bar = "bar", Violin = "violin"), selected = "whiskers"),
+                   choices = c(Whisker = "whiskers", Points = "point", Violins = "violin",
+                               "Individual bars" = "bar", "Grouped bars" = "grouped_bar"), selected = "whiskers"),
+
 
 # make choice to set ylim to 0:
 strong("Set Y axis origin to O:"),
