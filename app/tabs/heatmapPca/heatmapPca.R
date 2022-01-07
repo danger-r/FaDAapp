@@ -158,7 +158,7 @@ funFixedHeatmap <- function(used_Groups,calc_Table, colors, infoColor1,infoMiddl
   }
 
 
-funFixedPCA <- function(used_Groups,calcTable,colors,infoFilename, ACP_table){
+funFixedPCA <- function(used_Groups,calc_Table,colors,infoFilename, ACP_table){
   req( !is.null(calc_Table), library(future), cancelOutput = TRUE)                        #
   req( !is.null(calc_Table), library(promises), cancelOutput = TRUE)                       #
   plan(multisession)                                                                      #    
