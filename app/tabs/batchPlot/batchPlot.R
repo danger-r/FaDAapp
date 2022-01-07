@@ -13,7 +13,7 @@ batchPlot <- function(input,used_groups,calc_table,colorFunction, infoSetylim){ 
   Plot1 <- function(){
     validate( need( !is.null(calc_table()), "Please select a properly formatted dataset" ) )
     df <- calc_table()
-    graphList <- funBatchPlot(used_groups(),df,t(df),colorFunction(),input$Graph)
+    graphList <- funBatchPlot(used_groups(),df,t(df),colorFunction(),input$Graph, input$Setylim)
     grid.arrange(grobs = graphList, ncol= 4) #Arrange the graphs output
   }
   return(Plot1)
