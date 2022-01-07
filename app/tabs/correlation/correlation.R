@@ -194,26 +194,8 @@ correlogramOutput <- function(output,reacCorrTable,reacPvalCorrTable,reacCorrelo
                                                                       backgroundColor = styleInterval(  c(-reacCorrTable()$corrSelect, reacCorrTable()$corrSelect), c('lightyellow', 'white','lightyellow'))
                                                                       )
   })
-
   
-    output$pvalCorr_table <- renderDT({     datatable(reacPvalCorrTable()$table,
-                                                    extensions="Buttons",
-                                                    options = list(pageLength = 10, searching = FALSE, dom = 'Btpl', server = FALSE,
-                                                                   buttons =  list( 'copy',
-                                                                                    list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='csv',
-                                                                                         filename = paste(reacNameTable(),"_PvalCorrTable",sep="")),
-                                                                                    list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='excel',
-                                                                                         filename = paste(reacNameTable(),"_PvalCorrTable",sep=""))
-                                                                                    #list(title = paste(reacNameTable(),"_PvalCorrTable",sep=""), extend='pdf',  #pdf option removed
-                                                                                    #     filename= paste(reacNameTable(),"_PvalCorrTable",sep=""))
-                                                                                    ))) %>%
-                                                                formatStyle(
-                                                                  colnames(reacPvalCorrTable()$table),
-                                                                  fontWeight = styleInterval( c(reacPvalCorrTable()$pValCorrSelect), c('bold','normal')),
-                                                                  backgroundColor = styleInterval( c(reacPvalCorrTable()$pValCorrSelect), c('lightyellow', 'white')) )
-  })
-
-  
+ 
     output$pvalCorr_table <- renderDT({     datatable(reacPvalCorrTable()$table,
                                                     extensions="Buttons",
                                                     options = list(pageLength = 10, searching = FALSE, dom = 'Btpl', server = FALSE,
