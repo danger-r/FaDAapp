@@ -238,8 +238,8 @@ heatmapOutput <- function(output,reacHeatmap, reacACP, reacFixedHeatmap, reacFix
 FixedheatmapDownload <- function(input,output,reacFixedHeatmap){
   output$dFixedHeatmapTiff = downloadHandler(filename =
                                               reactive(paste(input$file1$name,"_heatmap.tiff",sep = "")),
-                                            content = function(file, compression = "lzw", res = 600) {
-                                              tiff(file)
+                                         content = function(file) {
+                                               tiff(file, units="in",width= 10, height= 5, compression = "lzw",  res = 600)
                                               reacFixedHeatmap()
                                               dev.off()                      })
   output$dFixedHeatmapSvg = downloadHandler(filename =
@@ -251,10 +251,9 @@ FixedheatmapDownload <- function(input,output,reacFixedHeatmap){
   output$dFixedHeatmapPdf = downloadHandler(filename =
                                               reactive(paste(input$file1$name,"_heatmap.pdf",sep = "")),
                                             content = function(file, compression = "lzw", res = 600) {
-                                              pdf(file)
+                                            pdf(file,  width= 10, height= 5)
                                               print( reacFixedHeatmap() )
                                               dev.off()                      })
-
 }
 
 FixedPCADownload <- function(input,output,reacFixedPCA){
@@ -264,15 +263,12 @@ FixedPCADownload <- function(input,output,reacFixedPCA){
                                                tiff(file, units="in",width= 10, height= 5, compression = "lzw",  res = 600)
                                                print( reacFixedPCA() )
                                                dev.off()                      })
-
-
   output$dFixedPCASvg = downloadHandler(filename =
                                               reactive(paste(input$file1$name,"_PCA.svg",sep = "")),
                                             content = function(file, compression = "lzw", res = 600) {
                                               svg(file,  width= 10, height= 5)
                                               print( reacFixedPCA() )
                                               dev.off()                      })
-
   output$dFixedPCAPdf = downloadHandler(filename =
                                           reactive(paste(input$file1$name,"_PCA.pdf",sep = "")),
                                         content = function(file, compression = "lzw", res = 600) {
