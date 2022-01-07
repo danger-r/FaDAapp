@@ -187,8 +187,7 @@ correlogramOutput <- function(output,reacCorrTable,reacPvalCorrTable,reacCorrelo
                                                                                      filename = paste(reacNameTable(),"_CorrTable",sep="")),
                                                                                 list(title = paste(reacNameTable(),"_CorrTable",sep=""), extend='excel',
                                                                                      filename = paste(reacNameTable(),"_CorrTable",sep="")),
-                                                                                list(title = paste(reacNameTable(),"_CorrTable",sep=""), extend='pdf',
-                                                                                     filename= paste(reacNameTable(),"_CorrTable",sep="")) )
+                                                                                list(title = paste(reacNameTable(),"_CorrTable",sep="") )
   ## formatStyle to higlight correlation according threshold (corrSelect):                                                           
                                                 ) )  %>%  formatStyle(colnames(reacCorrTable()$table),
                                                                       fontWeight = styleInterval(  c(-reacCorrTable()$corrSelect, reacCorrTable()$corrSelect), c('bold','normal','bold')),
