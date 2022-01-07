@@ -240,7 +240,7 @@ FixedheatmapDownload <- function(input,output,reacFixedHeatmap){
                                               reactive(paste(input$file1$name,"_heatmap.tiff",sep = "")),
                                             content = function(file, compression = "lzw", res = 600) {
                                               tiff(file)
-                                              print( reacFixedHeatmap() )
+                                              reacFixedHeatmap()
                                               dev.off()                      })
   output$dFixedHeatmapSvg = downloadHandler(filename =
                                              reactive(paste(input$file1$name,"_heatmap.svg",sep = "")),
