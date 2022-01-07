@@ -79,13 +79,18 @@ FixedHeatmap <- function(input, used_groups, calc_table, colorFunction) {       
 
 ## Independant Functions ###
 funCalcACPonly <- function(calc_Table){                        #calculate knn ACP data.frame
+  req( !is.null(calc_Table), library(future), cancelOutput = TRUE)                        #
+  req( !is.null(calc_Table), library(promises), cancelOutput = TRUE)                       #
+  plan(multisession)                                                                      #    
   
   if ( length( which(is.na(calc_Table) == TRUE)) >= 1 ) {
+#future        future_promise(seed=TRUE, {  
     import::from(impute, impute.knn)
     ACPcalcTable <- t(calc_Table)
     dfkNN <- impute.knn(calc_Table, k = 10, rowmax = 0.5, colmax =0.8, rng.seed=362436069)
     dfkNN <- t(dfkNN$data)
     ACP_table <-as.matrix(dfkNN)
+#end future              })
   }
   else{ACPcalcTable <- as.matrix(calc_Table)}
   
