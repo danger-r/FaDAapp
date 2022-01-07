@@ -193,6 +193,7 @@ funFixedPCA <- function(used_Groups,calcTable,colors,infoFilename, ACP_table){
   graph_2acp <- grid.arrange(graph_acp, graph_component, nrow = 1, widths = c(2,1))
 
   return(graph_2acp)
+      })
 }
 
 funACP <- function(used_Groups,calcTable,colors,infoFilename, ACP_table){
@@ -223,7 +224,6 @@ funACP <- function(used_Groups,calcTable,colors,infoFilename, ACP_table){
                                                 modeBarButtonsToRemove = c('lasso2d','sendDataToCloud','zoom2d',
                                                                            'resetScale2d','hoverClosestCartesian','hoverCompareCartesian'))
   return(graph_acp)
-  })
 }
 
 
