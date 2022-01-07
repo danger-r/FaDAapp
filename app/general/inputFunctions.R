@@ -25,18 +25,26 @@ isTransposedInput <- function(dataframe){
 #dataframe output :
 #the dataframe formated (transposed or not) or null if error != 0
 validingInput <- function(infoFileDatapath,decSeparator = "."){
+  
+    if (  grepl(".xlsx", infoFileDatapath)  == T ) {
+    import::from(xlsx, read.xlsx)                                           #read.xlsx from xlsx library
+    df <- read.xlsx(xlsxFile = infoFileDatapath, sheet = 1, skipEmptyRows = TRUE, r)
+    df <- as.data.frame(df)} else{
+
   if (  grepl(".txt", infoFileDatapath)  == T ) { separator= "\t"} else {separator=";"}
   #df <- read.csv(infoFileDatapath, sep =  separator, dec = decSeparator) #old function
   import::from(data.table, fread)                                           #fread from data.table library
   df <- fread(infoFileDatapath, sep =  separator, dec = decSeparator)     #use of fread to accelerate data read
   df <- as.data.frame(df)
-
+  }
+  
   if(anyDuplicated(df[,1])){
      return(list("error" = 1, "dataframe" = NULL))
   }else{
     rownames(df) <- df[,1]
     df <- df[,-1]
   }
+  
   transposed <- isTransposedInput(df)
   if(transposed == -1){
     return(list("error" = 2, "dataframe" = NULL))
