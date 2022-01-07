@@ -159,6 +159,12 @@ funFixedHeatmap <- function(used_Groups,calc_Table, colors, infoColor1,infoMiddl
 
 
 funFixedPCA <- function(used_Groups,calcTable,colors,infoFilename, ACP_table){
+  req( !is.null(calc_Table), library(future), cancelOutput = TRUE)                        #
+  req( !is.null(calc_Table), library(promises), cancelOutput = TRUE)                       #
+  plan(multisession)                                                                      #    
+  future_promise(seed=TRUE, { 
+  
+  
   dataforACP <- ACP_table
   ACPdf <- data.frame(dataforACP$x, "group" = used_Groups)
   eig <- data.frame(Components= c(paste("Comp.", rep(1:5))),
@@ -217,6 +223,7 @@ funACP <- function(used_Groups,calcTable,colors,infoFilename, ACP_table){
                                                 modeBarButtonsToRemove = c('lasso2d','sendDataToCloud','zoom2d',
                                                                            'resetScale2d','hoverClosestCartesian','hoverCompareCartesian'))
   return(graph_acp)
+  })
 }
 
 
