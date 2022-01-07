@@ -27,8 +27,8 @@ FixedHeatmap_UI <- function(){
         tags$h3("Heatmap:",style = "color: steelblue;"),
         plotOutput(outputId ="FixedHeatmap", width = "80%") %>% withSpinner(color = "#0dc5c1"),
         tags$br(),
-        #sliderInput(inputId = "Heatmap_width", label = "Change width (%)", min = 0, max = 100, value = 60),
-        #sliderInput(inputId = "Heatmap_height", label = "Change height (px)", min = 0, max = 800, value = 400),
+        #sliderInput(inputId = "Heatmap_width", label = "Change width (%)", min = 0, max = 100, value = 60),  #not used, was to midified image size
+        #sliderInput(inputId = "Heatmap_height", label = "Change height (px)", min = 0, max = 800, value = 400), #not used, was to midified image size
 
         downloadButton('dFixedHeatmapTiff', label="Download as .Tiff"),
         downloadButton('dFixedHeatmapSvg', label="Download as .SVG"),
@@ -36,14 +36,14 @@ FixedHeatmap_UI <- function(){
       )}
 
 ## Server Functions ####
-CalcACPonly <- function(input, calc_table){   #calculate knn ACP data.frame
+CalcACPonly <- function(input, calc_table){         #calculate knn ACP data.frame
   ACP_table <- reactive({
     return(funCalcACPonly(calc_table() ))
   })
   return(ACP_table)
 }
 
-ACP <- function(input,used_groups,calc_table,colorFunction, CalcACPonly){
+ACP <- function(input,used_groups,calc_table,colorFunction, CalcACPonly){              #interactive PCA
   ACP <- function(){
      return(funACP(used_groups(), calc_table(), colorFunction(), input$file1$name, CalcACPonly()))
  }
@@ -59,7 +59,7 @@ FixedPCA <- function(input,used_groups,calc_table,colorFunction, CalcACPonly){  
   return(FixedPCA)
 }
 
-heatMap <- function(input,used_groups,calc_table,colorFunction){
+heatMap <- function(input,used_groups,calc_table,colorFunction){              #interactive heatmap
 Heatmap <- function(){
     validate( need( !is.null(calc_table()), " " ) )
 
@@ -78,7 +78,7 @@ FixedHeatmap <- function(input, used_groups, calc_table, colorFunction) {       
 }
 
 ## Independant Functions ###
-funCalcACPonly <- function(calc_Table){
+funCalcACPonly <- function(calc_Table){                        #calculate knn ACP data.frame
   
   if ( length( which(is.na(calc_Table) == TRUE)) >= 1 ) {
     import::from(impute, impute.knn)
@@ -102,7 +102,8 @@ funHeatmap <- function(used_Groups,calc_Table,colors,infoColor1,infoMiddleColor,
   breaks=append(breaks, 10)
   breaks=append(breaks, -10, 0)
   
-  suppressPackageStartupMessages(library(gplots))   #For colorpanels in the heatmap
+  req( !is.null(calc_Table), suppressPackageStartupMessages(library(gplots)))     #For colorpanels in the heatmap
+
   mycol <- colorpanel(n=length(breaks)-1,low= infoColor1 , mid=infoMiddleColor,high=infoColor2)
 
   heatmapPlot <- heatmaply(t(scale(calc_Table)), Colv= infoClustering, Rowv = TRUE,
@@ -123,11 +124,11 @@ funFixedHeatmap <- function(used_Groups,calc_Table, colors, infoColor1,infoMiddl
   req( !is.null(calc_Table), library(ComplexHeatmap), cancelOutput = TRUE)
   req( !is.null(calc_Table), import::from(circlize, colorRamp2), cancelOutput = TRUE)
 
-  req( !is.null(calc_Table), library(future), cancelOutput = TRUE)
-  req( !is.null(calc_Table), library(promises), cancelOutput = TRUE)
-  plan(multisession)
+  req( !is.null(calc_Table), library(future), cancelOutput = TRUE)                        #
+  req( !is.null(calc_Table), library(promises), cancelOutput = TRUE)                       #
+  plan(multisession)                                                                      #    
 
-    future_promise(seed=TRUE, {
+    future_promise(seed=TRUE, {                                                   #executed asynchronously
   #Set heatmap colors
   col_fun = colorRamp2(c(-2, 0, 2), c(infoColor1, infoMiddleColor, infoColor2) )
 
@@ -148,7 +149,7 @@ funFixedHeatmap <- function(used_Groups,calc_Table, colors, infoColor1,infoMiddl
   FixedHeatmapPlot <- draw(HeatmapPlot, heatmap_legend_side = "left", annotation_legend_side = "left")
 
       return(FixedHeatmapPlot) 
-    }) #end future_promise
+    })                                                           #end future_promise
   }
 
 
@@ -236,7 +237,7 @@ FixedheatmapDownload <- function(input,output,reacFixedHeatmap){
                                               dev.off()                      })
   output$dFixedHeatmapSvg = downloadHandler(filename =
                                              reactive(paste(input$file1$name,"_heatmap.svg",sep = "")),
-                                           content = function(file, compression = "lzw", res = 600) {
+                                              content = function(file, compression = "lzw", res = 600) {
                                              svg(file)
                                              print( reacFixedHeatmap() )
                                              dev.off()                      })
@@ -246,6 +247,7 @@ FixedheatmapDownload <- function(input,output,reacFixedHeatmap){
                                               pdf(file)
                                               print( reacFixedHeatmap() )
                                               dev.off()                      })
+
 }
 
 FixedPCADownload <- function(input,output,reacFixedPCA){
