@@ -213,6 +213,7 @@ server <- function(input, output, session) {
 
 # =========== Download Graphs ####
   extableDownload(output,session)
+  tableStatDownload(input,output,reacMytableDescr,reacNameTable,reacMytableStat)
   FixedheatmapDownload(input,output,reacFixedHeatmap)
   FixedPCADownload(input,output,reacFixedPCA)
   batchPlotDownload(input,output, reacUsedTable, reacBatchPlot, reacMoreBatchPlot)
