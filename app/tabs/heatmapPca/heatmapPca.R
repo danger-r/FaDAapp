@@ -84,13 +84,15 @@ funCalcACPonly <- function(calc_Table){                        #calculate knn AC
   plan(multisession)                                                                      #    
   
   if ( length( which(is.na(calc_Table) == TRUE)) >= 1 ) {
-#future        future_promise(seed=TRUE, {  
+#future        
+    future_promise(seed=TRUE, {  
     import::from(impute, impute.knn)
     ACPcalcTable <- t(calc_Table)
     dfkNN <- impute.knn(calc_Table, k = 10, rowmax = 0.5, colmax =0.8, rng.seed=362436069)
     dfkNN <- t(dfkNN$data)
     ACP_table <-as.matrix(dfkNN)
-#end future              })
+#end future              
+    })
   }
   else{ACPcalcTable <- as.matrix(calc_Table)}
   
@@ -159,12 +161,6 @@ funFixedHeatmap <- function(used_Groups,calc_Table, colors, infoColor1,infoMiddl
 
 
 funFixedPCA <- function(used_Groups,calc_Table,colors,infoFilename, ACP_table){
-  req( !is.null(calc_Table), library(future), cancelOutput = TRUE)                        #
-  req( !is.null(calc_Table), library(promises), cancelOutput = TRUE)                       #
-  plan(multisession)                                                                      #    
-  future_promise(seed=TRUE, { 
-  
-  
   dataforACP <- ACP_table
   ACPdf <- data.frame(dataforACP$x, "group" = used_Groups)
   eig <- data.frame(Components= c(paste("Comp.", rep(1:5))),
@@ -193,7 +189,6 @@ funFixedPCA <- function(used_Groups,calc_Table,colors,infoFilename, ACP_table){
   graph_2acp <- grid.arrange(graph_acp, graph_component, nrow = 1, widths = c(2,1))
 
   return(graph_2acp)
-      })
 }
 
 funACP <- function(used_Groups,calcTable,colors,infoFilename, ACP_table){
