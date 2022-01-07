@@ -9,7 +9,7 @@ batchPlotUI <- function(){
 library(grid)             #Grid display
 library(ggplot2, verbose=FALSE)          #Plot graphs
 
-batchPlot <- function(input,used_groups,calc_table,colorFunction){          #input parameters
+batchPlot <- function(input,used_groups,calc_table,colorFunction, infoSetylim){          #input parameters
   Plot1 <- function(){
     validate( need( !is.null(calc_table()), "Please select a properly formatted dataset" ) )
     df <- calc_table()
